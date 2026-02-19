@@ -3,320 +3,671 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NumberQuest · Игровой портал</title>
+    <title>NumberQuest · Космическое приключение</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
 
         body {
-            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
-            color: white;
             min-height: 100vh;
+            background: radial-gradient(ellipse at bottom, #0d1d31 0%, #0c0d13 100%);
+            color: white;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 16px;
+            position: relative;
+            overflow-x: hidden;
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        /* Анимированные звезды */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: transparent;
+            animation: stars 200s linear infinite;
+        }
+
+        .stars::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            background-image: 
+                radial-gradient(2px 2px at 10px 10px, #fff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 20px 30px, #ffd700, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 40px 70px, #87ceeb, rgba(0,0,0,0)),
+                radial-gradient(3px 3px at 50px 160px, #ff69b4, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 90px 40px, #fff, rgba(0,0,0,0)),
+                radial-gradient(3px 3px at 130px 80px, #ffa500, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 160px 120px, #fff, rgba(0,0,0,0));
+            background-size: 200px 200px;
+            opacity: 0.5;
+        }
+
+        @keyframes stars {
+            from { transform: translateY(0); }
+            to { transform: translateY(-200px); }
         }
 
         .container {
-            max-width: 420px;
+            max-width: 440px;
             width: 100%;
+            position: relative;
+            z-index: 10;
         }
 
-        /* Карточка */
-        .card {
-            background: rgba(255, 255, 255, 0.1);
+        /* Приветственная анимация */
+        .welcome-banner {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 105, 180, 0.2));
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 60px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
             backdrop-filter: blur(10px);
+            animation: glow 2s ease-in-out infinite;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-banner::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 215, 0, 0.1), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+
+        @keyframes glow {
+            0% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(255, 105, 180, 0.4); }
+            100% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
+        }
+
+        .welcome-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #FFD700, #FF69B4, #87CEEB);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .welcome-sub {
+            font-size: 1rem;
+            opacity: 0.9;
+            color: #fff;
+        }
+
+        /* Карточка профиля */
+        .profile-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 48px;
             padding: 24px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
         }
 
-        /* Профиль */
-        .profile {
+        .profile-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,215,0,0.1) 0%, transparent 70%);
+            animation: rotate 10s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .profile-row {
             display: flex;
             align-items: center;
             gap: 16px;
-            margin-bottom: 20px;
+            position: relative;
+            z-index: 2;
         }
 
         .avatar {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
-            border-radius: 30px;
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #FFD700, #FF69B4);
+            border-radius: 35px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 28px;
+            font-size: 32px;
             font-weight: bold;
+            border: 3px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+            animation: pulse 2s ease-in-out infinite;
         }
 
-        .user-info h3 {
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-greeting {
             font-size: 0.9rem;
             opacity: 0.7;
             margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
-        .user-info h2 {
-            font-size: 1.5rem;
-            font-weight: bold;
+        .user-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .user-level {
+            display: inline-block;
+            background: rgba(255, 215, 0, 0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-top: 5px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
         }
 
         /* Статистика */
-        .stats {
+        .stats-container {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-columns: repeat(3, 1fr);
             gap: 10px;
-            margin-bottom: 24px;
+            margin: 20px 0;
         }
 
-        .stat {
+        .stat-block {
             background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 24px;
-            padding: 12px 5px;
+            padding: 15px 5px;
             text-align: center;
+            transition: transform 0.3s;
         }
 
-        .stat-value {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: #ffd700;
+        .stat-block:hover {
+            transform: translateY(-5px);
+            border-color: #FFD700;
+        }
+
+        .stat-number {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #FFD700, #FF69B4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1;
+            margin-bottom: 5px;
         }
 
         .stat-label {
             font-size: 0.7rem;
-            opacity: 0.6;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.7;
         }
 
         /* Навигация */
-        .nav {
+        .game-nav {
             display: flex;
             gap: 8px;
             overflow-x: auto;
-            margin-bottom: 20px;
-            padding-bottom: 5px;
+            padding: 5px 2px 15px 2px;
+            scrollbar-width: none;
+            margin-bottom: 10px;
         }
 
-        .nav-item {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 12px 24px;
-            border-radius: 40px;
-            white-space: nowrap;
-            font-weight: 600;
-            cursor: pointer;
+        .game-nav::-webkit-scrollbar {
+            display: none;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(5px);
             border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .nav-item.active {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            border-color: transparent;
-        }
-
-        /* Игровая область */
-        .game-area {
-            background: rgba(0, 0, 0, 0.3);
+            padding: 12px 20px;
             border-radius: 40px;
-            padding: 24px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: rgba(255, 255, 255, 0.7);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .nav-btn.active {
+            background: linear-gradient(135deg, #FFD700, #FF69B4);
+            border-color: transparent;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(255, 215, 0, 0.5);
+        }
+
+        .nav-btn.active .nav-emoji {
+            animation: bounce 1s ease infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+
+        /* Игровая карточка */
+        .game-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 48px;
+            padding: 28px 20px;
             margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,215,0,0.1) 0%, transparent 70%);
+            animation: rotate 15s linear infinite;
         }
 
         .game-header {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 20px;
+            align-items: center;
+            margin-bottom: 25px;
+            position: relative;
+            z-index: 2;
         }
 
-        .game-title {
-            font-size: 1.3rem;
-            font-weight: bold;
+        .game-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .game-badge {
+        .game-score {
             background: rgba(255, 215, 0, 0.2);
-            padding: 6px 16px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            padding: 8px 16px;
             border-radius: 30px;
-            color: #ffd700;
+            font-weight: 700;
+            font-size: 1rem;
+            color: #FFD700;
         }
 
         /* Прогресс */
-        .progress {
-            background: rgba(0, 0, 0, 0.4);
-            height: 30px;
-            border-radius: 20px;
-            padding: 3px;
-            margin: 20px 0;
+        .progress-container {
+            margin: 25px 0;
+            position: relative;
+            z-index: 2;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            opacity: 0.8;
         }
 
         .progress-bar {
+            background: rgba(0, 0, 0, 0.4);
+            height: 36px;
+            border-radius: 30px;
+            padding: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, #667eea, #764ba2);
-            border-radius: 20px;
+            background: linear-gradient(90deg, #FFD700, #FF69B4, #87CEEB);
+            border-radius: 30px;
+            transition: width 0.5s cubic-bezier(0.4, 1.5, 0.6, 1);
             display: flex;
             align-items: center;
             justify-content: flex-end;
             padding-right: 15px;
+            font-weight: 700;
             font-size: 0.9rem;
-            font-weight: bold;
-            transition: width 0.3s;
+            color: white;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+            position: relative;
+            overflow: hidden;
         }
 
-        /* Подсказка */
-        .hint {
-            background: rgba(102, 126, 234, 0.2);
-            border-radius: 40px;
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Хинт */
+        .hint-box {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 105, 180, 0.1));
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 60px;
             padding: 30px;
             text-align: center;
-            margin: 20px 0;
-            border: 1px solid rgba(102, 126, 234, 0.3);
+            margin: 25px 0;
+            position: relative;
+            z-index: 2;
+            backdrop-filter: blur(5px);
         }
 
-        .hint-main {
-            font-size: 3rem;
-            font-weight: bold;
+        .hint-emoji {
+            font-size: 4rem;
             margin-bottom: 10px;
+            filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.5));
+            animation: float 3s ease-in-out infinite;
         }
 
-        .hint-sub {
-            font-size: 1rem;
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .hint-text {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+
+        .hint-range {
+            font-size: 1.1rem;
             opacity: 0.8;
         }
 
         /* Ввод */
-        .input-group {
+        .input-wrapper {
             display: flex;
-            gap: 10px;
+            gap: 12px;
+            position: relative;
+            z-index: 2;
         }
 
-        .input-field {
+        .game-input {
             flex: 1;
-            background: rgba(0, 0, 0, 0.3);
-            border: 2px solid rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid rgba(255, 215, 0, 0.3);
             border-radius: 40px;
-            padding: 16px 20px;
-            font-size: 1.2rem;
+            padding: 18px 24px;
+            font-size: 1.5rem;
             color: white;
+            font-weight: 700;
             text-align: center;
             outline: none;
+            transition: all 0.3s;
         }
 
-        .input-field:focus {
-            border-color: #667eea;
+        .game-input:focus {
+            border-color: #FFD700;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+            transform: scale(1.02);
         }
 
-        .btn {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+        .action-btn {
+            background: linear-gradient(135deg, #FFD700, #FF69B4);
             border: none;
             border-radius: 40px;
-            padding: 0 30px;
+            padding: 0 35px;
             color: white;
-            font-weight: bold;
-            font-size: 1.2rem;
+            font-weight: 700;
+            font-size: 1.3rem;
             cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
-        .btn:active {
+        .action-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+        }
+
+        .action-btn:active {
             transform: scale(0.95);
         }
 
         /* История */
-        .history {
+        .history-box {
             background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 40px;
-            padding: 16px;
-            text-align: center;
+            padding: 16px 20px;
             font-size: 1rem;
-            opacity: 0.8;
+            color: rgba(255, 255, 255, 0.8);
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         /* Сетка режимов */
-        .modes-grid {
+        .modes-panel {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
             margin: 20px 0;
+            position: relative;
+            z-index: 2;
         }
 
-        .mode-item {
-            background: rgba(255, 255, 255, 0.1);
+        .mode-block {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 30px;
-            padding: 15px;
+            padding: 18px 10px;
             text-align: center;
             cursor: pointer;
+            transition: all 0.3s;
         }
 
-        .mode-item:active {
-            background: rgba(102, 126, 234, 0.3);
+        .mode-block:hover {
+            transform: translateY(-5px);
+            border-color: #FFD700;
+            background: rgba(255, 215, 0, 0.1);
+            box-shadow: 0 10px 20px -5px rgba(255, 215, 0, 0.3);
         }
 
-        .mode-emoji {
+        .mode-icon {
+            font-size: 2.5rem;
+            margin-bottom: 8px;
+            animation: rotate 10s linear infinite;
+        }
+
+        .mode-title {
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 4px;
+        }
+
+        .mode-desc {
+            font-size: 0.8rem;
+            opacity: 0.6;
+        }
+
+        /* Достижения */
+        .achievement-toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: linear-gradient(135deg, #FFD700, #FF69B4);
+            padding: 15px 25px;
+            border-radius: 50px;
+            color: white;
+            font-weight: 700;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            z-index: 1000;
+            transition: transform 0.5s;
+            border: 2px solid rgba(255,255,255,0.5);
+            text-align: center;
+            min-width: 280px;
+        }
+
+        .achievement-toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .achievement-icon {
             font-size: 2rem;
             margin-bottom: 5px;
         }
 
-        .mode-name {
-            font-weight: 600;
-        }
-
-        .mode-range {
-            font-size: 0.8rem;
-            opacity: 0.6;
+        /* Эффекты */
+        .glow-text {
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
         }
     </style>
 </head>
 <body>
+    <div class="stars"></div>
+    
     <div class="container">
+        <!-- Приветственный баннер -->
+        <div class="welcome-banner">
+            <div class="welcome-title">NumberQuest</div>
+            <div class="welcome-sub">⚡ Космическое приключение ⚡</div>
+        </div>
+
         <!-- Профиль -->
-        <div class="card" style="margin-bottom: 16px;">
-            <div class="profile">
+        <div class="profile-card">
+            <div class="profile-row">
                 <div class="avatar" id="userAvatar">👤</div>
                 <div class="user-info">
-                    <h3>Игрок</h3>
-                    <h2 id="userName">Загрузка...</h2>
+                    <div class="user-greeting">⚡ Добро пожаловать, ⚡</div>
+                    <div class="user-name" id="userName">Загрузка...</div>
+                    <div class="user-level" id="userLevel">Новичок</div>
                 </div>
             </div>
 
             <!-- Статистика -->
-            <div class="stats">
-                <div class="stat">
-                    <div class="stat-value" id="totalScore">0</div>
+            <div class="stats-container">
+                <div class="stat-block">
+                    <div class="stat-number" id="totalScore">0</div>
                     <div class="stat-label">ОЧКИ</div>
                 </div>
-                <div class="stat">
-                    <div class="stat-value" id="gamesPlayed">0</div>
+                <div class="stat-block">
+                    <div class="stat-number" id="gamesPlayed">0</div>
                     <div class="stat-label">ИГРЫ</div>
                 </div>
-                <div class="stat">
-                    <div class="stat-value" id="winRate">0%</div>
+                <div class="stat-block">
+                    <div class="stat-number" id="winRate">0%</div>
                     <div class="stat-label">ПОБЕД</div>
                 </div>
             </div>
         </div>
 
         <!-- Навигация -->
-        <div class="nav" id="gameNav">
-            <div class="nav-item active" data-game="classic">🎯 Классика</div>
-            <div class="nav-item" data-game="ranges">🎲 Режимы</div>
-            <div class="nav-item" data-game="speed">⚡ Экстрим</div>
-            <div class="nav-item" data-game="math">🧮 Примеры</div>
-            <div class="nav-item" data-game="memory">🧠 Память</div>
+        <div class="game-nav" id="gameNav">
+            <div class="nav-btn active" data-game="classic">
+                <span class="nav-emoji">🎯</span> Классика
+            </div>
+            <div class="nav-btn" data-game="ranges">
+                <span class="nav-emoji">🎲</span> Режимы
+            </div>
+            <div class="nav-btn" data-game="speed">
+                <span class="nav-emoji">⚡</span> Экстрим
+            </div>
+            <div class="nav-btn" data-game="math">
+                <span class="nav-emoji">🧮</span> Примеры
+            </div>
+            <div class="nav-btn" data-game="memory">
+                <span class="nav-emoji">🧠</span> Память
+            </div>
         </div>
 
-        <!-- Игра -->
-        <div class="game-area" id="gameContent">
+        <!-- Игровая область -->
+        <div class="game-card" id="gameContent">
             <!-- Сюда загружается игра -->
         </div>
 
         <!-- История -->
-        <div class="history" id="historyMessage">
-            👋 Добро пожаловать в NumberQuest!
+        <div class="history-box" id="historyMessage">
+            🚀 Готов к приключению?
         </div>
+    </div>
+
+    <!-- Достижение -->
+    <div class="achievement-toast" id="achievementToast">
+        <div class="achievement-icon">🏆</div>
+        <div id="achievementText">Достижение разблокировано!</div>
     </div>
 
     <script>
@@ -324,6 +675,7 @@
         const tg = Telegram.WebApp;
         tg.ready();
         tg.expand();
+        tg.enableClosingConfirmation();
 
         // Пользователь
         const user = tg.initDataUnsafe?.user;
@@ -336,6 +688,8 @@
         let totalScore = 0;
         let gamesPlayed = 0;
         let wins = 0;
+        let level = 1;
+        let achievements = [];
 
         // Состояния игр
         const games = {
@@ -371,18 +725,66 @@
             }
         };
 
+        // Достижения
+        const achievementsList = [
+            { id: 'first_win', name: 'Первая победа', desc: 'Одержи первую победу', icon: '🏆', points: 50 },
+            { id: 'speed_demon', name: 'Спидраннер', desc: 'Выиграй в экстрим-режиме', icon: '⚡', points: 100 },
+            { id: 'math_genius', name: 'Гений математики', desc: 'Реши 5 примеров подряд', icon: '🧮', points: 150 },
+            { id: 'memory_master', name: 'Мастер памяти', desc: 'Угадай 3 числа подряд', icon: '🧠', points: 200 },
+            { id: 'high_roller', name: 'Высокий риск', desc: 'Угадай число в диапазоне 1-1000', icon: '🎲', points: 300 }
+        ];
+
         // Обновление статистики
         function updateStats() {
             document.getElementById('totalScore').textContent = totalScore;
             document.getElementById('gamesPlayed').textContent = gamesPlayed;
             const winPercent = gamesPlayed > 0 ? Math.round((wins / gamesPlayed) * 100) : 0;
             document.getElementById('winRate').textContent = winPercent + '%';
+            
+            // Обновление уровня
+            level = Math.floor(totalScore / 100) + 1;
+            document.getElementById('userLevel').textContent = level === 1 ? 'Новичок' : 
+                                                               level === 2 ? 'Исследователь' :
+                                                               level === 3 ? 'Воин' :
+                                                               level === 4 ? 'Легенда' : 'Бог чисел';
+        }
+
+        // Показ достижения
+        function showAchievement(achievement) {
+            document.getElementById('achievementText').textContent = achievement.name + ' +' + achievement.points;
+            document.getElementById('achievementToast').classList.add('show');
+            totalScore += achievement.points;
+            updateStats();
+            
+            setTimeout(() => {
+                document.getElementById('achievementToast').classList.remove('show');
+            }, 3000);
+        }
+
+        // Проверка достижений
+        function checkAchievements(game, win) {
+            if (win) {
+                if (!achievements.includes('first_win') && wins === 1) {
+                    achievements.push('first_win');
+                    showAchievement(achievementsList[0]);
+                }
+                
+                if (game === 'speed' && !achievements.includes('speed_demon')) {
+                    achievements.push('speed_demon');
+                    showAchievement(achievementsList[1]);
+                }
+                
+                if (game === 'ranges' && games.ranges.max === 1000 && !achievements.includes('high_roller')) {
+                    achievements.push('high_roller');
+                    showAchievement(achievementsList[4]);
+                }
+            }
         }
 
         // Навигация
-        document.querySelectorAll('.nav-item').forEach(item => {
+        document.querySelectorAll('.nav-btn').forEach(item => {
             item.addEventListener('click', () => {
-                document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                document.querySelectorAll('.nav-btn').forEach(n => n.classList.remove('active'));
                 item.classList.add('active');
                 currentGame = item.dataset.game;
                 loadGame(currentGame);
@@ -421,19 +823,26 @@
             const progress = (g.attempts / g.maxAttempts) * 100;
             return `
                 <div class="game-header">
-                    <span class="game-title">🎯 Классика</span>
-                    <span class="game-badge">Уровень ${g.level}</span>
+                    <div class="game-name">КЛАССИКА</div>
+                    <div class="game-score">УРОВЕНЬ ${g.level}</div>
                 </div>
-                <div class="progress">
-                    <div class="progress-bar" style="width: ${progress}%">${g.attempts}/${g.maxAttempts}</div>
+                <div class="progress-container">
+                    <div class="progress-label">
+                        <span>⚡ ПРОГРЕСС</span>
+                        <span>${g.attempts}/${g.maxAttempts}</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${progress}%">${g.attempts}/${g.maxAttempts}</div>
+                    </div>
                 </div>
-                <div class="hint">
-                    <div class="hint-main" id="gameHint">🔍</div>
-                    <div class="hint-sub" id="rangeHint">${g.min}-${g.max}</div>
+                <div class="hint-box">
+                    <div class="hint-emoji" id="gameHintEmoji">🔮</div>
+                    <div class="hint-text" id="gameHint">?</div>
+                    <div class="hint-range" id="rangeHint">от ${g.min} до ${g.max}</div>
                 </div>
-                <div class="input-group">
-                    <input type="number" id="gameInput" class="input-field" placeholder="?" min="${g.min}" max="${g.max}">
-                    <button class="btn" id="submitBtn">→</button>
+                <div class="input-wrapper">
+                    <input type="number" id="gameInput" class="game-input" placeholder="?" min="${g.min}" max="${g.max}">
+                    <button class="action-btn" id="submitBtn">→</button>
                 </div>
             `;
         }
@@ -442,55 +851,58 @@
             const g = games.ranges;
             return `
                 <div class="game-header">
-                    <span class="game-title">🎲 Режимы</span>
-                    <span class="game-badge" id="currentRange">${g.min}-${g.max}</span>
+                    <div class="game-name">РЕЖИМЫ</div>
+                    <div class="game-score" id="currentRange">${g.min}-${g.max}</div>
                 </div>
-                <div class="modes-grid" id="modesGrid">
-                    <div class="mode-item" data-min="1" data-max="50">
-                        <div class="mode-emoji">🌱</div>
-                        <div class="mode-name">Легкий</div>
-                        <div class="mode-range">1-50</div>
+                <div class="modes-panel" id="modesGrid">
+                    <div class="mode-block" data-min="1" data-max="50">
+                        <div class="mode-icon">🌱</div>
+                        <div class="mode-title">Легкий</div>
+                        <div class="mode-desc">1-50</div>
                     </div>
-                    <div class="mode-item" data-min="1" data-max="100">
-                        <div class="mode-emoji">🌿</div>
-                        <div class="mode-name">Средний</div>
-                        <div class="mode-range">1-100</div>
+                    <div class="mode-block" data-min="1" data-max="100">
+                        <div class="mode-icon">🌿</div>
+                        <div class="mode-title">Средний</div>
+                        <div class="mode-desc">1-100</div>
                     </div>
-                    <div class="mode-item" data-min="1" data-max="500">
-                        <div class="mode-emoji">🗻</div>
-                        <div class="mode-name">Сложный</div>
-                        <div class="mode-range">1-500</div>
+                    <div class="mode-block" data-min="1" data-max="500">
+                        <div class="mode-icon">🗻</div>
+                        <div class="mode-title">Сложный</div>
+                        <div class="mode-desc">1-500</div>
                     </div>
-                    <div class="mode-item" data-min="1" data-max="1000">
-                        <div class="mode-emoji">🚀</div>
-                        <div class="mode-name">Экстрим</div>
-                        <div class="mode-range">1-1000</div>
+                    <div class="mode-block" data-min="1" data-max="1000">
+                        <div class="mode-icon">🚀</div>
+                        <div class="mode-title">Экстрим</div>
+                        <div class="mode-desc">1-1000</div>
                     </div>
                 </div>
-                <div class="hint">
-                    <div class="hint-main" id="gameHint">${games.ranges.secret || '🎯'}</div>
-                    <div class="hint-sub" id="rangeHint">${games.ranges.min}-${games.ranges.max}</div>
+                <div class="hint-box">
+                    <div class="hint-emoji" id="gameHintEmoji">${games.ranges.secret ? '🔢' : '🎯'}</div>
+                    <div class="hint-text" id="gameHint">${games.ranges.secret || 'Выбери режим'}</div>
+                    <div class="hint-range" id="rangeHint">${games.ranges.min}-${games.ranges.max}</div>
                 </div>
-                <div class="input-group">
-                    <input type="number" id="gameInput" class="input-field" placeholder="?" min="${games.ranges.min}" max="${games.ranges.max}">
-                    <button class="btn" id="submitBtn">→</button>
+                <div class="input-wrapper">
+                    <input type="number" id="gameInput" class="game-input" placeholder="?" min="${games.ranges.min}" max="${games.ranges.max}">
+                    <button class="action-btn" id="submitBtn">→</button>
                 </div>
             `;
         }
 
         function getSpeedHTML() {
+            const g = games.speed;
             return `
                 <div class="game-header">
-                    <span class="game-title">⚡ Экстрим</span>
-                    <span class="game-badge">5 попыток</span>
+                    <div class="game-name">ЭКСТРИМ</div>
+                    <div class="game-score">${g.maxAttempts - g.attempts} ПОПЫТОК</div>
                 </div>
-                <div class="hint">
-                    <div class="hint-main" id="gameHint">⚡</div>
-                    <div class="hint-sub">Угадай число 1-100</div>
+                <div class="hint-box">
+                    <div class="hint-emoji">⚡</div>
+                    <div class="hint-text" id="gameHint">⚡⚡⚡</div>
+                    <div class="hint-range">Число 1-100</div>
                 </div>
-                <div class="input-group">
-                    <input type="number" id="gameInput" class="input-field" placeholder="?" min="1" max="100">
-                    <button class="btn" id="submitBtn">→</button>
+                <div class="input-wrapper">
+                    <input type="number" id="gameInput" class="game-input" placeholder="?" min="1" max="100">
+                    <button class="action-btn" id="submitBtn">→</button>
                 </div>
             `;
         }
@@ -500,16 +912,17 @@
             g.answer = g.num1 + g.num2;
             return `
                 <div class="game-header">
-                    <span class="game-title">🧮 Примеры</span>
-                    <span class="game-badge">${g.attempts}/${g.maxAttempts}</span>
+                    <div class="game-name">ПРИМЕРЫ</div>
+                    <div class="game-score">${g.attempts}/${g.maxAttempts}</div>
                 </div>
-                <div class="hint">
-                    <div class="hint-main" id="gameHint">${g.num1} + ${g.num2} = ?</div>
-                    <div class="hint-sub">Реши пример</div>
+                <div class="hint-box">
+                    <div class="hint-emoji">🧮</div>
+                    <div class="hint-text" id="gameHint">${g.num1} + ${g.num2} = ?</div>
+                    <div class="hint-range">Реши пример</div>
                 </div>
-                <div class="input-group">
-                    <input type="number" id="gameInput" class="input-field" placeholder="?">
-                    <button class="btn" id="submitBtn">→</button>
+                <div class="input-wrapper">
+                    <input type="number" id="gameInput" class="game-input" placeholder="?">
+                    <button class="action-btn" id="submitBtn">→</button>
                 </div>
             `;
         }
@@ -518,16 +931,17 @@
             const g = games.memory;
             return `
                 <div class="game-header">
-                    <span class="game-title">🧠 Память</span>
-                    <span class="game-badge">${g.attempts}/${g.maxAttempts}</span>
+                    <div class="game-name">ПАМЯТЬ</div>
+                    <div class="game-score">${g.attempts}/${g.maxAttempts}</div>
                 </div>
-                <div class="hint">
-                    <div class="hint-main" id="gameHint">${g.number}</div>
-                    <div class="hint-sub">Запомни число!</div>
+                <div class="hint-box">
+                    <div class="hint-emoji">🧠</div>
+                    <div class="hint-text" id="gameHint">${g.number}</div>
+                    <div class="hint-range">Запомни число!</div>
                 </div>
-                <div class="input-group">
-                    <input type="number" id="gameInput" class="input-field" placeholder="?">
-                    <button class="btn" id="submitBtn">→</button>
+                <div class="input-wrapper">
+                    <input type="number" id="gameInput" class="game-input" placeholder="?">
+                    <button class="action-btn" id="submitBtn">→</button>
                 </div>
             `;
         }
@@ -538,8 +952,7 @@
                 document.getElementById('submitBtn').onclick = classicHandler;
             }
             else if (game === 'ranges') {
-                // Выбор режима
-                document.querySelectorAll('.mode-item').forEach(btn => {
+                document.querySelectorAll('.mode-block').forEach(btn => {
                     btn.onclick = () => {
                         const min = parseInt(btn.dataset.min);
                         const max = parseInt(btn.dataset.max);
@@ -549,7 +962,7 @@
                         document.getElementById('currentRange').textContent = `${min}-${max}`;
                         document.getElementById('rangeHint').textContent = `${min}-${max}`;
                         document.getElementById('gameHint').textContent = '🎯';
-                        document.getElementById('historyMessage').textContent = `Режим ${min}-${max}`;
+                        document.getElementById('historyMessage').textContent = `✨ Выбран режим ${min}-${max}`;
                     };
                 });
                 document.getElementById('submitBtn').onclick = rangesHandler;
@@ -572,6 +985,7 @@
             if (!value) return;
             
             const g = games.classic;
+            g.attempts++;
             
             if (value === g.secret) {
                 totalScore += 25;
@@ -580,18 +994,19 @@
                 g.level++;
                 g.secret = Math.floor(Math.random() * 100) + 1;
                 g.attempts = 0;
-                document.getElementById('historyMessage').textContent = '🎉 Победа! +25 очков';
+                document.getElementById('historyMessage').textContent = '🎉 ПОБЕДА! +25 очков ✨';
+                checkAchievements('classic', true);
                 updateStats();
             } else {
-                g.attempts++;
-                const hint = value < g.secret ? 'Больше' : 'Меньше';
+                const hint = value < g.secret ? 'БОЛЬШЕ' : 'МЕНЬШЕ';
                 document.getElementById('gameHint').textContent = hint;
-                document.getElementById('historyMessage').textContent = `❌ ${value} - ${hint}`;
+                document.getElementById('gameHintEmoji').textContent = value < g.secret ? '👉' : '👈';
+                document.getElementById('historyMessage').textContent = `❌ Число ${value} - нужно ${hint}`;
                 
                 if (g.attempts >= g.maxAttempts) {
                     g.secret = Math.floor(Math.random() * 100) + 1;
                     g.attempts = 0;
-                    document.getElementById('historyMessage').textContent = '🔄 Новое число';
+                    document.getElementById('historyMessage').textContent = '🔄 Новый раунд!';
                 }
             }
             
@@ -602,19 +1017,24 @@
         function rangesHandler() {
             const input = document.getElementById('gameInput');
             const value = parseInt(input.value);
-            if (!value || !games.ranges.secret) return;
+            if (!value || !games.ranges.secret) {
+                document.getElementById('historyMessage').textContent = '⚠️ Сначала выбери режим!';
+                return;
+            }
             
             if (value === games.ranges.secret) {
                 totalScore += 30;
                 gamesPlayed++;
                 wins++;
-                document.getElementById('historyMessage').textContent = '🎉 Угадал! +30 очков';
-                games.ranges.secret = null;
+                document.getElementById('historyMessage').textContent = '🎉 УГАДАЛ! +30 очков ⭐';
+                checkAchievements('ranges', true);
                 updateStats();
+                games.ranges.secret = Math.floor(Math.random() * (games.ranges.max - games.ranges.min + 1)) + games.ranges.min;
             } else {
-                const hint = value < games.ranges.secret ? 'Больше' : 'Меньше';
+                const hint = value < games.ranges.secret ? 'БОЛЬШЕ' : 'МЕНЬШЕ';
                 document.getElementById('gameHint').textContent = hint;
-                document.getElementById('historyMessage').textContent = `${value} - ${hint}`;
+                document.getElementById('gameHintEmoji').textContent = value < games.ranges.secret ? '👉' : '👈';
+                document.getElementById('historyMessage').textContent = `${value} - нужно ${hint}`;
             }
             
             input.value = '';
@@ -632,19 +1052,20 @@
                 totalScore += 40;
                 gamesPlayed++;
                 wins++;
-                document.getElementById('historyMessage').textContent = '⚡ Супер! +40 очков';
+                document.getElementById('historyMessage').textContent = '⚡ СУПЕР! +40 очков ⚡';
+                checkAchievements('speed', true);
+                updateStats();
                 g.secret = Math.floor(Math.random() * 100) + 1;
                 g.attempts = 0;
-                updateStats();
             } else {
                 g.attempts++;
-                document.getElementById('gameHint').textContent = value < g.secret ? '👉' : '👈';
+                document.getElementById('gameHint').textContent = value < g.secret ? '👉 БОЛЬШЕ' : '👈 МЕНЬШЕ';
                 document.getElementById('historyMessage').textContent = `Осталось ${g.maxAttempts - g.attempts} попыток`;
                 
                 if (g.attempts >= g.maxAttempts) {
                     g.secret = Math.floor(Math.random() * 100) + 1;
                     g.attempts = 0;
-                    document.getElementById('historyMessage').textContent = '🔄 Новое число';
+                    document.getElementById('historyMessage').textContent = '🔄 Новое число!';
                 }
             }
             
@@ -663,11 +1084,12 @@
                 totalScore += 20;
                 gamesPlayed++;
                 wins++;
-                document.getElementById('historyMessage').textContent = '✅ Правильно! +20 очков';
+                document.getElementById('historyMessage').textContent = '✅ ПРАВИЛЬНО! +20 очков 🎯';
+                checkAchievements('math', true);
+                updateStats();
                 g.num1 = Math.floor(Math.random() * 20) + 1;
                 g.num2 = Math.floor(Math.random() * 20) + 1;
                 g.attempts = 0;
-                updateStats();
             } else {
                 g.attempts++;
                 document.getElementById('historyMessage').textContent = `❌ Правильно: ${g.answer}`;
@@ -694,10 +1116,11 @@
                 totalScore += 35;
                 gamesPlayed++;
                 wins++;
-                document.getElementById('historyMessage').textContent = '🧠 Отлично! +35 очков';
+                document.getElementById('historyMessage').textContent = '🧠 ОТЛИЧНО! +35 очков 🌟';
+                checkAchievements('memory', true);
+                updateStats();
                 g.number = Math.floor(Math.random() * 900) + 100;
                 g.attempts = 0;
-                updateStats();
             } else {
                 g.attempts++;
                 document.getElementById('historyMessage').textContent = `❌ Было: ${g.number}`;
