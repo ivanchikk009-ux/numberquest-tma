@@ -980,4 +980,387 @@
         });
 
         // Показать/скрыть лидеров
-        document.getElementById('toggleLeader
+        document.getElementById('toggleLeaderboard').addEventListener('click', () => {
+            const leaderboard = document.getElementById('leaderboardCard');
+            leaderboard.classList.toggle('hidden');
+            document.getElementById('toggleLeaderboard').textContent = 
+                leaderboard.classList.contains('hidden') ? 
+                '🏆 ПОКАЗАТЬ ТАБЛИЦУ ЛИДЕРОВ 🏆' : 
+                '🏆 СКРЫТЬ ТАБЛИЦУ ЛИДЕРОВ 🏆';
+        });
+
+        // Загрузка игры
+        function loadGame(game) {
+            let html = '';
+            
+            switch(game) {
+                case 'classic':
+                    html = getClassicHTML();
+                    break;
+                case 'ranges':
+                    html = getRangesHTML();
+                    break;
+                case 'speed':
+                    html = getSpeedHTML();
+                    break;
+                case 'math':
+                    html = getMathHTML();
+                    break;
+                case 'memory':
+                    html = getMemoryHTML();
+                    break;
+            }
+            
+            document.getElementById('gameContent').innerHTML = html;
+            attachEvents(game);
+        }
+
+        // HTML для каждой игры
+        function getClassicHTML() {
+            const g = games.classic;
+            const progress = (g.attempts / g.maxAttempts) * 100;
+            return `
+                <div class="game-header">
+                    <div class="game-name">КЛАССИКА</div>
+                    <div class="game-score">УРОВЕНЬ ${g.level}</div>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-label">
+                        <span>⚡ ПРОГРЕСС</span>
+                        <span>${g.attempts}/${g.maxAttempts}</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${progress}%">${g.attempts}/${g.maxAttempts}</div>
+                    </div>
+                </div>
+                <div class="hint-box">
+                    <div class="hint-emoji" id="gameHintEmoji">🔮</div>
+                    <div class="hint-text" id="gameHint">?</div>
+                    <div class="hint-range" id="rangeHint">от ${g.min} до ${g.max}</div>
+                </div>
+                <div class="input-wrapper">
+                    <input type="number" id="gameInput" class="game-input" placeholder="?" min="${g.min}" max="${g.max}">
+                    <button class="action-btn" id="submitBtn">→</button>
+                </div>
+            `;
+        }
+
+        function getRangesHTML() {
+            const g = games.ranges;
+            return `
+                <div class="game-header">
+                    <div class="game-name">РЕЖИМЫ</div>
+                    <div class="game-score" id="currentRange">${g.min}-${g.max}</div>
+                </div>
+                <div class="modes-panel" id="modesGrid">
+                    <div class="mode-block" data-min="1" data-max="50">
+                        <div class="mode-icon">🌱</div>
+                        <div class="mode-title">Легкий</div>
+                        <div class="mode-desc">1-50</div>
+                    </div>
+                    <div class="mode-block" data-min="1" data-max="100">
+                        <div class="mode-icon">🌿</div>
+                        <div class="mode-title">Средний</div>
+                        <div class="mode-desc">1-100</div>
+                    </div>
+                    <div class="mode-block" data-min="1" data-max="500">
+                        <div class="mode-icon">🗻</div>
+                        <div class="mode-title">Сложный</div>
+                        <div class="mode-desc">1-500</div>
+                    </div>
+                    <div class="mode-block" data-min="1" data-max="1000">
+                        <div class="mode-icon">🚀</div>
+                        <div class="mode-title">Экстрим</div>
+                        <div class="mode-desc">1-1000</div>
+                    </div>
+                </div>
+                <div class="hint-box">
+                    <div class="hint-emoji" id="gameHintEmoji">${games.ranges.secret ? '🔢' : '🎯'}</div>
+                    <div class="hint-text" id="gameHint">${games.ranges.secret ? '?' : 'Выбери режим'}</div>
+                    <div class="hint-range" id="rangeHint">${games.ranges.min}-${games.ranges.max}</div>
+                </div>
+                <div class="input-wrapper">
+                    <input type="number" id="gameInput" class="game-input" placeholder="?" min="${games.ranges.min}" max="${games.ranges.max}">
+                    <button class="action-btn" id="submitBtn">→</button>
+                </div>
+            `;
+        }
+
+        function getSpeedHTML() {
+            const g = games.speed;
+            return `
+                <div class="game-header">
+                    <div class="game-name">ЭКСТРИМ</div>
+                    <div class="game-score">${g.maxAttempts - g.attempts} ПОПЫТОК</div>
+                </div>
+                <div class="hint-box">
+                    <div class="hint-emoji">⚡</div>
+                    <div class="hint-text" id="gameHint">⚡⚡⚡</div>
+                    <div class="hint-range">Число 1-100</div>
+                </div>
+                <div class="input-wrapper">
+                    <input type="number" id="gameInput" class="game-input" placeholder="?" min="1" max="100">
+                    <button class="action-btn" id="submitBtn">→</button>
+                </div>
+            `;
+        }
+
+        function getMathHTML() {
+            const g = games.math;
+            g.answer = g.num1 + g.num2;
+            return `
+                <div class="game-header">
+                    <div class="game-name">ПРИМЕРЫ</div>
+                    <div class="game-score">${g.attempts}/${g.maxAttempts}</div>
+                </div>
+                <div class="hint-box">
+                    <div class="hint-emoji">🧮</div>
+                    <div class="hint-text" id="gameHint">${g.num1} + ${g.num2} = ?</div>
+                    <div class="hint-range">Реши пример</div>
+                </div>
+                <div class="input-wrapper">
+                    <input type="number" id="gameInput" class="game-input" placeholder="?">
+                    <button class="action-btn" id="submitBtn">→</button>
+                </div>
+            `;
+        }
+
+        function getMemoryHTML() {
+            const g = games.memory;
+            return `
+                <div class="game-header">
+                    <div class="game-name">ПАМЯТЬ</div>
+                    <div class="game-score">${g.attempts}/${g.maxAttempts}</div>
+                </div>
+                <div class="hint-box">
+                    <div class="hint-emoji">🧠</div>
+                    <div class="hint-text" id="gameHint">${g.number}</div>
+                    <div class="hint-range">Запомни число!</div>
+                </div>
+                <div class="input-wrapper">
+                    <input type="number" id="gameInput" class="game-input" placeholder="?">
+                    <button class="action-btn" id="submitBtn">→</button>
+                </div>
+            `;
+        }
+
+        // Прикрепление событий
+        function attachEvents(game) {
+            if (game === 'classic') {
+                document.getElementById('submitBtn').onclick = classicHandler;
+                document.getElementById('gameInput').onkeypress = (e) => {
+                    if (e.key === 'Enter') classicHandler();
+                };
+            }
+            else if (game === 'ranges') {
+                document.querySelectorAll('.mode-block').forEach(btn => {
+                    btn.onclick = () => {
+                        const min = parseInt(btn.dataset.min);
+                        const max = parseInt(btn.dataset.max);
+                        games.ranges.min = min;
+                        games.ranges.max = max;
+                        games.ranges.secret = Math.floor(Math.random() * (max - min + 1)) + min;
+                        document.getElementById('currentRange').textContent = `${min}-${max}`;
+                        document.getElementById('rangeHint').textContent = `${min}-${max}`;
+                        document.getElementById('gameHint').textContent = '?';
+                        document.getElementById('gameHintEmoji').textContent = '🎯';
+                        document.getElementById('historyMessage').textContent = `✨ Выбран режим ${min}-${max}`;
+                    };
+                });
+                document.getElementById('submitBtn').onclick = rangesHandler;
+                document.getElementById('gameInput').onkeypress = (e) => {
+                    if (e.key === 'Enter') rangesHandler();
+                };
+            }
+            else if (game === 'speed') {
+                document.getElementById('submitBtn').onclick = speedHandler;
+                document.getElementById('gameInput').onkeypress = (e) => {
+                    if (e.key === 'Enter') speedHandler();
+                };
+            }
+            else if (game === 'math') {
+                document.getElementById('submitBtn').onclick = mathHandler;
+                document.getElementById('gameInput').onkeypress = (e) => {
+                    if (e.key === 'Enter') mathHandler();
+                };
+            }
+            else if (game === 'memory') {
+                document.getElementById('submitBtn').onclick = memoryHandler;
+                document.getElementById('gameInput').onkeypress = (e) => {
+                    if (e.key === 'Enter') memoryHandler();
+                };
+            }
+        }
+
+        // Обработчики игр (исправлено - убрана подсказка правильного ответа)
+        function classicHandler() {
+            const input = document.getElementById('gameInput');
+            const value = parseInt(input.value);
+            if (!value) return;
+            
+            const g = games.classic;
+            g.attempts++;
+            
+            if (value === g.secret) {
+                totalScore += 25;
+                gamesPlayed++;
+                wins++;
+                g.level++;
+                g.secret = Math.floor(Math.random() * 100) + 1;
+                g.attempts = 0;
+                document.getElementById('historyMessage').textContent = '🎉 ПОБЕДА! +25 очков ✨';
+                checkAchievements('classic', true);
+                updateStats();
+            } else {
+                const hint = value < g.secret ? 'БОЛЬШЕ' : 'МЕНЬШЕ';
+                document.getElementById('gameHint').textContent = hint;
+                document.getElementById('gameHintEmoji').textContent = value < g.secret ? '👉' : '👈';
+                document.getElementById('historyMessage').textContent = `❌ Число ${value} - нужно ${hint}`;
+                
+                if (g.attempts >= g.maxAttempts) {
+                    g.secret = Math.floor(Math.random() * 100) + 1;
+                    g.attempts = 0;
+                    document.getElementById('historyMessage').textContent = '🔄 Новый раунд!';
+                }
+            }
+            
+            input.value = '';
+            loadGame('classic');
+        }
+
+        function rangesHandler() {
+            const input = document.getElementById('gameInput');
+            const value = parseInt(input.value);
+            if (!value || !games.ranges.secret) {
+                document.getElementById('historyMessage').textContent = '⚠️ Сначала выбери режим!';
+                return;
+            }
+            
+            if (value === games.ranges.secret) {
+                totalScore += 30;
+                gamesPlayed++;
+                wins++;
+                document.getElementById('historyMessage').textContent = '🎉 УГАДАЛ! +30 очков ⭐';
+                checkAchievements('ranges', true);
+                updateStats();
+                games.ranges.secret = Math.floor(Math.random() * (games.ranges.max - games.ranges.min + 1)) + games.ranges.min;
+                document.getElementById('gameHint').textContent = '?';
+                document.getElementById('gameHintEmoji').textContent = '🎯';
+            } else {
+                const hint = value < games.ranges.secret ? 'БОЛЬШЕ' : 'МЕНЬШЕ';
+                document.getElementById('gameHint').textContent = hint;
+                document.getElementById('gameHintEmoji').textContent = value < games.ranges.secret ? '👉' : '👈';
+                document.getElementById('historyMessage').textContent = `${value} - нужно ${hint}`;
+            }
+            
+            input.value = '';
+            loadGame('ranges');
+        }
+
+        function speedHandler() {
+            const input = document.getElementById('gameInput');
+            const value = parseInt(input.value);
+            if (!value) return;
+            
+            const g = games.speed;
+            
+            if (value === g.secret) {
+                totalScore += 40;
+                gamesPlayed++;
+                wins++;
+                document.getElementById('historyMessage').textContent = '⚡ СУПЕР! +40 очков ⚡';
+                checkAchievements('speed', true);
+                updateStats();
+                g.secret = Math.floor(Math.random() * 100) + 1;
+                g.attempts = 0;
+                document.getElementById('gameHint').textContent = '⚡⚡⚡';
+            } else {
+                g.attempts++;
+                document.getElementById('gameHint').textContent = value < g.secret ? '👉 БОЛЬШЕ' : '👈 МЕНЬШЕ';
+                document.getElementById('historyMessage').textContent = `Осталось ${g.maxAttempts - g.attempts} попыток`;
+                
+                if (g.attempts >= g.maxAttempts) {
+                    g.secret = Math.floor(Math.random() * 100) + 1;
+                    g.attempts = 0;
+                    document.getElementById('historyMessage').textContent = '🔄 Новое число!';
+                    document.getElementById('gameHint').textContent = '⚡⚡⚡';
+                }
+            }
+            
+            input.value = '';
+            loadGame('speed');
+        }
+
+        function mathHandler() {
+            const input = document.getElementById('gameInput');
+            const value = parseInt(input.value);
+            if (!value) return;
+            
+            const g = games.math;
+            
+            if (value === g.answer) {
+                totalScore += 20;
+                gamesPlayed++;
+                wins++;
+                document.getElementById('historyMessage').textContent = '✅ ПРАВИЛЬНО! +20 очков 🎯';
+                checkAchievements('math', true);
+                updateStats();
+                g.num1 = Math.floor(Math.random() * 20) + 1;
+                g.num2 = Math.floor(Math.random() * 20) + 1;
+                g.attempts = 0;
+                document.getElementById('gameHint').textContent = `${g.num1} + ${g.num2} = ?`;
+            } else {
+                g.attempts++;
+                document.getElementById('historyMessage').textContent = `❌ Неправильно`;
+                
+                if (g.attempts >= g.maxAttempts) {
+                    g.num1 = Math.floor(Math.random() * 20) + 1;
+                    g.num2 = Math.floor(Math.random() * 20) + 1;
+                    g.attempts = 0;
+                    document.getElementById('gameHint').textContent = `${g.num1} + ${g.num2} = ?`;
+                }
+            }
+            
+            input.value = '';
+            loadGame('math');
+        }
+
+        function memoryHandler() {
+            const input = document.getElementById('gameInput');
+            const value = parseInt(input.value);
+            if (!value) return;
+            
+            const g = games.memory;
+            
+            if (value === g.number) {
+                totalScore += 35;
+                gamesPlayed++;
+                wins++;
+                document.getElementById('historyMessage').textContent = '🧠 ОТЛИЧНО! +35 очков 🌟';
+                checkAchievements('memory', true);
+                updateStats();
+                g.number = Math.floor(Math.random() * 900) + 100;
+                g.attempts = 0;
+                document.getElementById('gameHint').textContent = g.number;
+            } else {
+                g.attempts++;
+                document.getElementById('historyMessage').textContent = `❌ Неправильно`;
+                
+                if (g.attempts >= g.maxAttempts) {
+                    g.number = Math.floor(Math.random() * 900) + 100;
+                    g.attempts = 0;
+                    document.getElementById('gameHint').textContent = g.number;
+                }
+            }
+            
+            input.value = '';
+            loadGame('memory');
+        }
+
+        // Запуск
+        loadGame('classic');
+        updateStats();
+        updateLeaderboard();
+    </script>
+</body>
+</html>
