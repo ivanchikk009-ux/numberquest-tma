@@ -299,6 +299,11 @@
             box-shadow: 0 5px 10px -5px #667eea;
         }
 
+        .btn:disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
         /* Сетка режимов */
         .modes-grid {
             display: grid;
@@ -370,15 +375,15 @@
             <div class="stats">
                 <div class="stat-item">
                     <div class="stat-value" id="totalScore">0</div>
-                    <div class="stat-label">Очки</div>
+                    <div class="stat-label">ОЧКИ</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-value" id="gamesPlayed">0</div>
-                    <div class="stat-label">Игры</div>
+                    <div class="stat-label">ИГРЫ</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-value" id="winRate">0%</div>
-                    <div class="stat-label">Побед</div>
+                    <div class="stat-label">ПОБЕД</div>
                 </div>
             </div>
         </div>
@@ -420,6 +425,7 @@
         let totalScore = 0;
         let gamesPlayed = 0;
         let wins = 0;
+        let memoryTimer = null;
 
         // Состояния игр
         const games = {
@@ -455,7 +461,8 @@
                 number: 0,
                 attempts: 0,
                 maxAttempts: 3,
-                showing: true
+                showing: true,
+                canInput: false
             }
         };
 
@@ -467,12 +474,25 @@
             document.getElementById('winRate').textContent = winPercent + '%';
         }
 
+        // Очистка таймеров при смене игры
+        function clearGameTimers() {
+            if (games.speed.timer) {
+                clearInterval(games.speed.timer);
+                games.speed.timer = null;
+            }
+            if (memoryTimer) {
+                clearTimeout(memoryTimer);
+                memoryTimer = null;
+            }
+        }
+
         // Навигация
         document.querySelectorAll('.nav-item').forEach(item => {
             item.addEventListener('click', () => {
                 document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
                 item.classList.add('active');
                 currentGame = item.dataset.game;
+                clearGameTimers();
                 loadGame(currentGame);
             });
         });
@@ -623,6 +643,9 @@
         function renderMemory() {
             if (games.memory.number === 0) {
                 games.memory.number = Math.floor(Math.random() * 900) + 100;
+                games.memory.showing = true;
+                games.memory.canInput = false;
+                games.memory.attempts = 0;
             }
             
             return `
@@ -633,12 +656,12 @@
                 
                 <div class="hint">
                     <div class="hint-main" id="gameHint">${games.memory.showing ? games.memory.number : '???'}</div>
-                    <div class="hint-sub">${games.memory.showing ? 'Запомни число!' : 'Какое число было?'}</div>
+                    <div class="hint-sub">${games.memory.showing ? 'Запомни число! (3 сек)' : 'Какое число было?'}</div>
                 </div>
                 
                 <div class="input-group">
-                    <input type="number" id="gameInput" class="input-field" placeholder="?">
-                    <button class="btn" id="submitBtn">→</button>
+                    <input type="number" id="gameInput" class="input-field" placeholder="?" ${!games.memory.canInput ? 'disabled' : ''}>
+                    <button class="btn" id="submitBtn" ${!games.memory.canInput ? 'disabled' : ''}>→</button>
                 </div>
             `;
         }
@@ -677,14 +700,17 @@
                 games.speed.timeLeft = 20;
                 games.speed.timer = setInterval(() => {
                     games.speed.timeLeft--;
-                    document.getElementById('timerDisplay').textContent = games.speed.timeLeft + 'с';
+                    const timerDisplay = document.getElementById('timerDisplay');
+                    if (timerDisplay) {
+                        timerDisplay.textContent = games.speed.timeLeft + 'с';
+                    }
                     
                     if (games.speed.timeLeft <= 0) {
                         clearInterval(games.speed.timer);
+                        games.speed.timer = null;
                         document.getElementById('gameHint').textContent = '⏰ Время вышло!';
                         document.getElementById('historyMessage').textContent = 'Попробуй снова!';
                         games.speed.secret = Math.floor(Math.random() * 100) + 1;
-                        games.speed.timeLeft = 20;
                     }
                 }, 1000);
                 
@@ -696,14 +722,22 @@
             }
             
             if (game === 'memory') {
-                // Показываем число на 3 секунды
+                // Сбрасываем состояние памяти
                 games.memory.showing = true;
-                setTimeout(() => {
+                games.memory.canInput = false;
+                
+                // Таймер на показ числа
+                if (memoryTimer) clearTimeout(memoryTimer);
+                memoryTimer = setTimeout(() => {
                     games.memory.showing = false;
+                    games.memory.canInput = true;
                     loadGame('memory');
                 }, 3000);
                 
                 document.getElementById('submitBtn').addEventListener('click', memoryHandler);
+                document.getElementById('gameInput').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' && games.memory.canInput) memoryHandler();
+                });
             }
         }
 
@@ -731,12 +765,12 @@
                 const hint = value < g.secret ? '👉 Больше' : '👈 Меньше';
                 document.getElementById('gameHint').textContent = hint;
                 document.getElementById('historyMessage').textContent = `Было ${value}, ${hint}`;
-            }
-            
-            if (g.attempts >= g.maxAttempts) {
-                g.secret = Math.floor(Math.random() * 100) + 1;
-                g.attempts = 0;
-                document.getElementById('historyMessage').textContent = '🔄 Новый уровень!';
+                
+                if (g.attempts >= g.maxAttempts) {
+                    g.secret = Math.floor(Math.random() * 100) + 1;
+                    g.attempts = 0;
+                    document.getElementById('historyMessage').textContent = '🔄 Новый уровень!';
+                }
             }
             
             input.value = '';
@@ -774,7 +808,10 @@
                 totalScore += 40;
                 gamesPlayed++;
                 wins++;
-                clearInterval(games.speed.timer);
+                if (games.speed.timer) {
+                    clearInterval(games.speed.timer);
+                    games.speed.timer = null;
+                }
                 document.getElementById('gameHint').textContent = '⚡ СУПЕР!';
                 document.getElementById('historyMessage').textContent = '+40 очков!';
                 updateStats();
@@ -820,7 +857,7 @@
         function memoryHandler() {
             const input = document.getElementById('gameInput');
             const value = parseInt(input.value);
-            if (!value) return;
+            if (!value || !games.memory.canInput) return;
             
             if (value === games.memory.number) {
                 totalScore += 35;
@@ -831,6 +868,7 @@
                 games.memory.number = 0;
                 games.memory.attempts = 0;
                 updateStats();
+                if (memoryTimer) clearTimeout(memoryTimer);
                 setTimeout(() => loadGame('memory'), 1000);
             } else {
                 games.memory.attempts++;
@@ -843,6 +881,17 @@
                 }
             }
             input.value = '';
+            
+            if (games.memory.attempts < games.memory.maxAttempts && games.memory.number !== 0) {
+                games.memory.showing = true;
+                games.memory.canInput = false;
+                if (memoryTimer) clearTimeout(memoryTimer);
+                memoryTimer = setTimeout(() => {
+                    games.memory.showing = false;
+                    games.memory.canInput = true;
+                    loadGame('memory');
+                }, 3000);
+            }
         }
 
         // Запуск
