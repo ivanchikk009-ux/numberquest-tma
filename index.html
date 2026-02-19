@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>NumberQuest · TMA</title>
+    <!-- Подключаем Telegram Web App SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        /* Сброс и переменные Telegram */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: var(--tg-theme-bg-color, #1c1c2e);
+            color: var(--tg-theme-text-color, #ffffff);
+            display: flex;
+            flex-direction: column;
+            padding: 16px;
+            transition: background 0.2s ease;
+        }
+
+        /* Главный контейнер игры */
+        .game-container {
+            max-width: 500px;
+            margin: 0 auto;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            flex: 1;
+        }
+
+        /* Шапка с уровнем и счетом */
+        .header-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--tg-theme-secondary-bg-color, #2a2a3a);
+            padding: 16px 20px;
+            border-radius: 28px;
+            font-weight: 600;
+            font-size: 1.2rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .score-badge, .level-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .score-badge span, .level-badge span {
+            color: var(--tg-theme-hint-color, #9a9ab0);
+            font-size: 0.9rem;
+        }
+
+        /* Башня (визуализация прогресса) */
+        .tower-section {
+            background: var(--tg-theme-secondary-bg-color, #242434);
+            border-radius: 48px;
+            padding: 24px 20px;
+            text-align: center;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.6), 0 10px 20px rgba(0,0,0,0.4);
+        }
+
+        .tower-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            color: var(--tg-theme-hint-color, #aaa);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .tower-bar-container {
+            background: rgba(0,0,0,0.5);
+            height: 36px;
+            border-radius: 30px;
+            padding: 4px;
+            border: 1px solid rgba(255,215,0,0.2);
+            box-shadow: 0 0 10px rgba(0,255,200,0.2);
+        }
+
+        .tower-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #ffb86b, #ff7b9c, #b983ff);
+            border-radius: 30px;
+            transition: width 0.3s cubic-bezier(0.4, 1.2, 0.3, 1);
+            box-shadow: 0 0 20px #ff9f7c;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 15px;
+            color: #0a0a14;
+            font-weight: bold;
+            font-size: 0.9rem;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .tower-bar-fill span {
+            opacity: 0.8;
+        }
+
+        /* Карточка подсказки */
+        .hint-box {
+            background: var(--tg-theme-button-color, #5a67d8);
+            color: var(--tg-theme-button-text-color, #ffffff);
+            padding: 20px;
+            border-radius: 36px;
+            font-size: 2.5rem;
+            text-align: center;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-shadow: 0 3px 0 rgba(0,0,0,0.2);
+            box-shadow: 0 12px 0 rgba(0,0,0,0.3);
+            margin: 10px 0 5px;
+            word-break: break-word;
+        }
+
+        .hint-sub {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin-top: 5px;
+            color: var(--tg-theme-text-color, #eee);
+        }
+
+        /* Поле ввода */
+        .input-area {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .input-field {
+            background: var(--tg-theme-secondary-bg-color, #2e2e42);
+            border: 2px solid var(--tg-theme-hint-color, #40405a);
+            border-radius: 48px;
+            padding: 20px 24px;
+            font-size: 2rem;
+            text-align: center;
+            color: var(--tg-theme-text-color, #fff);
+            font-weight: 600;
+            outline: none;
+            width: 100%;
+        }
+
+        .input-field:focus {
+            border-color: var(--tg-theme-button-color, #8a6eff);
+        }
+
+        /* Сетка кнопок */
+        .button-grid {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 8px;
+        }
+
+        .btn {
+            border: none;
+            border-radius: 60px;
+            padding: 16px 24px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            background: var(--tg-theme-button-color, #3168e0);
+            color: var(--tg-theme-button-text-color, white);
+            box-shadow: 0 6px 0 rgba(0,0,0,0.3);
+            transition: all 0.08s linear;
+            cursor: pointer;
+            flex: 1 1 auto;
+            min-width: 120px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 rgba(0,0,0,0.3);
+        }
+
+        .btn-secondary {
+            background: var(--tg-theme-secondary-bg-color, #3a3a55);
+            color: var(--tg-theme-text-color, #fff);
+            box-shadow: 0 5px 0 #1f1f30;
+        }
+
+        .mode-selector {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin: 16px 0 8px;
+        }
+
+        .mode-btn {
+            background: transparent;
+            border: 2px solid var(--tg-theme-hint-color, #4b4b67);
+            color: var(--tg-theme-hint-color, #b0b0cf);
+            padding: 10px 16px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            flex: 1;
+            transition: all 0.1s;
+            cursor: pointer;
+        }
+
+        .mode-btn.active {
+            background: var(--tg-theme-button-color, #5a67d8);
+            border-color: var(--tg-theme-button-color, #5a67d8);
+            color: var(--tg-theme-button-text-color, white);
+        }
+
+        .footer-logs {
+            font-size: 0.9rem;
+            color: var(--tg-theme-hint-color, #888);
+            text-align: center;
+            margin-top: 20px;
+            background: rgba(0,0,0,0.2);
+            padding: 12px;
+            border-radius: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <!-- Верхние показатели -->
+        <div class="header-stats">
+            <div class="level-badge">
+                <span>🔰 ЭТАЖ</span>
+                <span id="currentLevelDisplay">1</span>
+            </div>
+            <div class="score-badge">
+                <span>⚡ СЧЁТ</span>
+                <span id="scoreDisplay">0</span>
+            </div>
+        </div>
+
+        <!-- Башня прогресса -->
+        <div class="tower-section">
+            <div class="tower-label">
+                <span>🪨 Фундамент</span>
+                <span>🏰 Небо</span>
+            </div>
+            <div class="tower-bar-container">
+                <div class="tower-bar-fill" id="towerFill" style="width: 0%;">
+                    <span id="towerPercent">0%</span>
+                </div>
+            </div>
+            <div style="margin-top: 10px; color: var(--tg-theme-hint-color);">Высота башни: <strong id="towerHeightLabel">0</strong></div>
+        </div>
+
+        <!-- Подсказка (тепло/холодно) -->
+        <div class="hint-box" id="hintMessage">
+            🔮 Введи число
+            <div class="hint-sub" id="rangeHint">от 1 до 50</div>
+        </div>
+
+        <!-- Ввод числа -->
+        <div class="input-area">
+            <input type="number" id="numberInput" class="input-field" placeholder="Число" value="">
+
+            <div class="button-grid">
+                <button class="btn" id="guessBtn">🔥 Проверить</button>
+                <button class="btn btn-secondary" id="newGameBtn">🔄 Новый этаж</button>
+            </div>
+
+            <!-- Выбор режима сложности -->
+            <div class="mode-selector" id="modeContainer">
+                <button class="mode-btn active" data-mode="easy">🌱 Легко (1-50)</button>
+                <button class="mode-btn" data-mode="medium">🌿 Средне (1-100)</button>
+                <button class="mode-btn" data-mode="hard">🗻 Сложно (1-500)</button>
+            </div>
+        </div>
+
+        <!-- Нижняя панель (история попыток) -->
+        <div class="footer-logs" id="historyLog">
+            ⏳ История попыток пуста
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // --- Инициализация Telegram WebApp ---
+            const tg = window.Telegram.WebApp;
+            tg.ready(); // Говорим Telegram, что приложение готово
+            tg.expand(); // Разворачиваем на весь экран
+
+            // --- Игровые переменные ---
+            let secretNumber = 42;          // загаданное число
+            let minRange = 1;
+            let maxRange = 50;               // зависит от режима
+            let attempts = 0;
+            let score = 0;
+            let level = 1;                    // номер "этажа" (уровня)
+            let maxAttemptsPerLevel = 7;       // максимум попыток на уровень
+            let gameHistory = [];               // последние попытки (max 3)
+            
+            // Элементы DOM
+            const hintEl = document.getElementById('hintMessage');
+            const rangeHintEl = document.getElementById('rangeHint');
+            const towerFill = document.getElementById('towerFill');
+            const towerPercent = document.getElementById('towerPercent');
+            const towerHeightLabel = document.getElementById('towerHeightLabel');
+            const scoreDisplay = document.getElementById('scoreDisplay');
+            const levelDisplay = document.getElementById('currentLevelDisplay');
+            const historyLog = document.getElementById('historyLog');
+            const numberInput = document.getElementById('numberInput');
+            const guessBtn = document.getElementById('guessBtn');
+            const newGameBtn = document.getElementById('newGameBtn');
+            const modeBtns = document.querySelectorAll('.mode-btn');
+
+            // --- Вспомогательная функция обновления интерфейса ---
+            function updateUI() {
+                // Обновление текста диапазона
+                rangeHintEl.innerText = `от ${minRange} до ${maxRange}`;
+
+                // Прогресс башни (сколько попыток использовано от максимума)
+                let percent = Math.min((attempts / maxAttemptsPerLevel) * 100, 100);
+                towerFill.style.width = percent + '%';
+                towerPercent.innerText = Math.round(percent) + '%';
+                towerHeightLabel.innerText = `${attempts}/${maxAttemptsPerLevel}`;
+
+                // Счет и уровень
+                scoreDisplay.innerText = score;
+                levelDisplay.innerText = level;
+
+                // История попыток
+                if (gameHistory.length === 0) {
+                    historyLog.innerText = '⏳ История попыток пуста';
+                } else {
+                    let logText = gameHistory.map(item => {
+                        if (item.diff === 'hot') return '🔥 ' + item.value;
+                        if (item.diff === 'warm') return '✨ ' + item.value;
+                        return '❄️ ' + item.value;
+                    }).join(' · ');
+                    historyLog.innerText = '🕒 ' + logText;
+                }
+
+                // Меняем hint в зависимости от близости (но это уже в процессе проверки)
+            }
+
+            // Генерация нового числа (и сброс попыток)
+            function generateNewNumber() {
+                secretNumber = Math.floor(Math.random() * (maxRange - minRange + 1)) + minRange;
+                attempts = 0;
+                gameHistory = [];
+                hintEl.innerHTML = `🔮 Новая башня<br><span class="hint-sub">введи число</span>`;
+                updateUI();
+                console.log('(Cheat) Загадано:', secretNumber); // для теста
+            }
+
+            // Смена режима (легкий/средний/сложный)
+            function setMode(mode) {
+                modeBtns.forEach(btn => btn.classList.remove('active'));
+                document.querySelector(`[data-mode="${mode}"]`).classList.add('active');
+
+                switch (mode) {
+                    case 'easy':
+                        minRange = 1;
+                        maxRange = 50;
+                        maxAttemptsPerLevel = 7;
+                        break;
+                    case 'medium':
+                        minRange = 1;
+                        maxRange = 100;
+                        maxAttemptsPerLevel = 8;
+                        break;
+                    case 'hard':
+                        minRange = 1;
+                        maxRange = 500;
+                        maxAttemptsPerLevel = 10;
+                        break;
+                }
+                // Сброс игры с новым режимом
+                level = 1;
+                score = 0;
+                generateNewNumber();
+            }
+
+            // Проверка догадки
+            function handleGuess() {
+                let guess = parseInt(numberInput.value, 10);
+                if (isNaN(guess) || guess < minRange || guess > maxRange) {
+                    tg.showAlert(`❗ Введи число от ${minRange} до ${maxRange}`);
+                    return;
+                }
+
+                attempts++;
+                let difference = Math.abs(secretNumber - guess);
+                let hintText = '';
+                let diffType = '';
+
+                // Определяем тепловой статус
+                if (guess === secretNumber) {
+                    // ПОБЕДА НА ЭТАЖЕ
+                    hintText = '🎉 ТОЧНО! Башня выросла!';
+                    diffType = 'hot';
+                    
+                    // Начисление очков (бонус за оставшиеся попытки)
+                    let bonus = (maxAttemptsPerLevel - attempts + 1) * 10;
+                    score += 20 + Math.max(0, bonus);
+                    level++;
+
+                    // Добавляем в историю
+                    gameHistory.unshift({ value: guess, diff: 'hot' });
+                    if (gameHistory.length > 3) gameHistory.pop();
+
+                    updateUI();
+
+                    // Генерируем новый секретный номер для следующего уровня
+                    generateNewNumber();
+                    numberInput.value = '';
+                    return;
+
+                } else {
+                    // Не угадал
+                    if (difference <= Math.floor((maxRange - minRange) * 0.05)) {
+                        hintText = '🔥 ОГОНЬ! Совсем рядом!';
+                        diffType = 'hot';
+                    } else if (difference <= Math.floor((maxRange - minRange) * 0.2)) {
+                        hintText = '✨ Тепло, уже ближе';
+                        diffType = 'warm';
+                    } else {
+                        hintText = '❄️ Холодно (далеко)';
+                        diffType = 'cold';
+                    }
+
+                    // Добавляем в историю
+                    gameHistory.unshift({ value: guess, diff: diffType });
+                    if (gameHistory.length > 3) gameHistory.pop();
+
+                    // Выводим направление
+                    let direction = (guess < secretNumber) ? '👉 Нужно больше' : '👈 Нужно меньше';
+                    hintEl.innerHTML = `${hintText}<br><span class="hint-sub">${direction}</span>`;
+                }
+
+                // Проверка на превышение попыток (проигрыш на этаже)
+                if (attempts >= maxAttemptsPerLevel && guess !== secretNumber) {
+                    tg.showAlert(`💔 Башня рухнула... Загадано было ${secretNumber}. Начинаем этаж заново.`);
+                    // Не меняем уровень, но сбрасываем попытки с тем же числом? Или новое число?
+                    // Логичнее новое число, но штраф.
+                    score = Math.max(0, score - 15); // штраф
+                    generateNewNumber(); // новое число, этаж тот же
+                    numberInput.value = '';
+                    return;
+                }
+
+                updateUI();
+                numberInput.value = ''; // очищаем поле после хода (удобно)
+                numberInput.focus();
+            }
+
+            // --- События кнопок ---
+            guessBtn.addEventListener('click', handleGuess);
+
+            newGameBtn.addEventListener('click', () => {
+                // Сброс текущего уровня (новый этаж с сохранением счета)
+                if (level > 1) level--; // небольшой сброс прогресса (но можно просто перегенерация)
+                generateNewNumber();
+                numberInput.value = '';
+                tg.showAlert('✨ Новый этаж начат!');
+            });
+
+            // Обработчики режимов
+            modeBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const mode = e.target.dataset.mode;
+                    setMode(mode);
+                    numberInput.value = '';
+                });
+            });
+
+            // Энтер в поле ввода
+            numberInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleGuess();
+                }
+            });
+
+            // Старт игры
+            setMode('easy');  // по умолчанию
+        })();
+    </script>
+</body>
+</html>
