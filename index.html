@@ -3,259 +3,285 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NumberQuest · Игровой портал</title>
+    <title>NumberQuest · Космический</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Inter', sans-serif;
         }
 
         body {
-            background: var(--tg-theme-bg-color, #0a0c1a);
-            color: var(--tg-theme-text-color, #ffffff);
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            padding: 12px;
-        }
-
-        /* Главный контейнер */
-        .app-container {
-            max-width: 420px;
-            margin: 0 auto;
-            width: 100%;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        /* Шапка с профилем */
-        .profile-card {
-            background: linear-gradient(145deg, var(--tg-theme-secondary-bg-color, #1a1c2c), var(--tg-theme-bg-color, #0e1020));
-            border-radius: 40px;
-            padding: 16px;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            border: 1px solid rgba(255, 215, 0, 0.1);
-            box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.5);
-        }
-
-        .profile-avatar {
-            width: 60px;
-            height: 60px;
-            border-radius: 30px;
-            background: linear-gradient(135deg, #FF6B6B, #4ECDC4);
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 28px;
-            font-weight: bold;
-            box-shadow: 0 10px 20px rgba(255, 107, 107, 0.3);
+            padding: 16px;
+            position: relative;
+            overflow-x: hidden;
         }
 
-        .profile-info {
-            flex: 1;
+        /* Звездный фон */
+        body::before {
+            content: '';
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(2px 2px at 20px 30px, #fff, rgba(0,0,0,0)),
+                        radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)),
+                        radial-gradient(2px 2px at 80px 120px, #fff, rgba(0,0,0,0));
+            background-size: 200px 200px;
+            opacity: 0.3;
+            animation: stars 60s linear infinite;
         }
 
-        .profile-name {
-            font-size: 1.3rem;
-            font-weight: 700;
+        @keyframes stars {
+            from { transform: translateY(0); }
+            to { transform: translateY(-200px); }
+        }
+
+        .container {
+            max-width: 420px;
+            width: 100%;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Карточка с эффектом стекла */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 48px;
+            padding: 24px 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+        }
+
+        /* Профиль */
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .avatar {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, #00d2ff, #3a7bd5);
+            border-radius: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: 800;
+            box-shadow: 0 15px 30px -10px #00d2ff80;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .user-info h3 {
+            font-size: 1rem;
+            opacity: 0.7;
+            font-weight: 400;
             margin-bottom: 4px;
         }
 
-        .profile-stats {
-            display: flex;
-            gap: 20px;
-            font-size: 0.8rem;
-            opacity: 0.7;
+        .user-info h2 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff, #aaddff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        /* Статистика в карточках */
-        .stats-grid {
+        /* Статистика */
+        .stats {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 8px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 24px;
         }
 
-        .stat-card {
-            background: var(--tg-theme-secondary-bg-color, #1e2030);
-            border-radius: 24px;
+        .stat-item {
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 28px;
             padding: 16px 5px;
             text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        .stat-number {
-            font-size: 1.8rem;
+        .stat-value {
+            font-size: 2rem;
             font-weight: 800;
-            background: linear-gradient(135deg, #FFD93D, #FF6B6B);
+            background: linear-gradient(135deg, #FFD700, #FFA500);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             line-height: 1;
+            margin-bottom: 4px;
         }
 
         .stat-label {
-            font-size: 0.65rem;
-            opacity: 0.6;
+            font-size: 0.7rem;
             text-transform: uppercase;
             letter-spacing: 1px;
+            opacity: 0.6;
         }
 
-        /* Навигация по играм */
-        .nav-scroll {
+        /* Навигация */
+        .nav {
             display: flex;
             gap: 8px;
             overflow-x: auto;
-            padding: 5px 0;
+            padding: 5px 2px 15px 2px;
             scrollbar-width: none;
-            -webkit-overflow-scrolling: touch;
         }
 
-        .nav-scroll::-webkit-scrollbar {
+        .nav::-webkit-scrollbar {
             display: none;
         }
 
         .nav-item {
-            background: var(--tg-theme-secondary-bg-color, #1e2030);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 14px 24px;
             border-radius: 40px;
             font-weight: 600;
-            font-size: 1rem;
+            font-size: 0.95rem;
             white-space: nowrap;
             cursor: pointer;
             transition: all 0.2s;
-            color: var(--tg-theme-hint-color, #aaa);
+            color: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(5px);
         }
 
         .nav-item.active {
-            background: linear-gradient(135deg, #667EEA, #764BA2);
-            color: white;
+            background: linear-gradient(135deg, #667eea, #764ba2);
             border-color: transparent;
-            box-shadow: 0 10px 20px -5px #667EEA80;
+            color: white;
+            box-shadow: 0 10px 20px -5px #667eea80;
+            transform: translateY(-2px);
         }
 
         /* Игровая карточка */
-        .game-card {
-            background: linear-gradient(145deg, var(--tg-theme-secondary-bg-color, #1a1c2c), var(--tg-theme-bg-color, #0e1020));
-            border-radius: 48px;
+        .game-area {
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 40px;
             padding: 24px;
-            margin: 5px 0;
-            border: 1px solid rgba(255, 215, 0, 0.1);
+            margin: 10px 0 20px 0;
         }
 
         .game-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
 
         .game-title {
             font-size: 1.5rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #fff, #aac8ff);
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff, #c0c0ff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
         .game-badge {
-            background: rgba(255, 215, 0, 0.1);
+            background: linear-gradient(135deg, #FF6B6B, #FF8E53);
             padding: 8px 16px;
             border-radius: 30px;
+            font-weight: 700;
             font-size: 0.9rem;
-            font-weight: 600;
-            color: #FFD93D;
-            border: 1px solid rgba(255, 215, 0, 0.3);
+            box-shadow: 0 5px 15px -5px #FF6B6B;
         }
 
-        /* Прогресс-бар */
-        .progress-section {
-            margin: 20px 0;
-        }
-
-        .progress-label {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            font-size: 0.9rem;
-            opacity: 0.7;
-        }
-
-        .progress-bar {
-            background: rgba(0, 0, 0, 0.4);
+        /* Прогресс */
+        .progress {
+            background: rgba(0, 0, 0, 0.3);
             height: 36px;
             border-radius: 30px;
             padding: 4px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            margin: 20px 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .progress-fill {
+        .progress-bar {
             height: 100%;
-            background: linear-gradient(90deg, #667EEA, #764BA2, #FF6B6B);
+            background: linear-gradient(90deg, #667eea, #764ba2, #ff6b6b);
             border-radius: 30px;
             transition: width 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: flex-end;
             padding-right: 15px;
-            font-weight: 600;
+            font-weight: 700;
             font-size: 0.9rem;
             color: white;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            box-shadow: 0 0 20px #667eea;
         }
 
         /* Подсказка */
-        .hint-container {
-            background: rgba(102, 126, 234, 0.1);
+        .hint {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
+            border: 1px solid rgba(102, 126, 234, 0.3);
             border-radius: 40px;
-            padding: 24px;
+            padding: 28px;
             text-align: center;
             margin: 20px 0;
-            border: 1px solid rgba(102, 126, 234, 0.3);
+            backdrop-filter: blur(5px);
         }
 
         .hint-main {
-            font-size: 2.8rem;
+            font-size: 3.5rem;
             font-weight: 800;
             margin-bottom: 8px;
+            text-shadow: 0 0 20px rgba(255,255,255,0.5);
         }
 
         .hint-sub {
             font-size: 1rem;
-            opacity: 0.7;
+            opacity: 0.8;
+            letter-spacing: 1px;
         }
 
         /* Поле ввода */
-        .input-wrapper {
+        .input-group {
             display: flex;
             gap: 12px;
             margin: 20px 0;
         }
 
-        .game-input {
+        .input-field {
             flex: 1;
             background: rgba(0, 0, 0, 0.3);
             border: 2px solid rgba(255, 255, 255, 0.1);
             border-radius: 40px;
             padding: 18px 24px;
-            font-size: 1.3rem;
+            font-size: 1.4rem;
             color: white;
             font-weight: 600;
             text-align: center;
             outline: none;
+            backdrop-filter: blur(5px);
         }
 
-        .game-input:focus {
-            border-color: #667EEA;
+        .input-field:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 20px #667eea80;
         }
 
-        .game-button {
-            background: linear-gradient(135deg, #667EEA, #764BA2);
+        .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
             border: none;
             border-radius: 40px;
             padding: 0 30px;
@@ -263,134 +289,137 @@
             font-weight: 700;
             font-size: 1.2rem;
             cursor: pointer;
-            box-shadow: 0 10px 20px -5px #667EEA80;
+            box-shadow: 0 10px 20px -5px #667eea80;
+            transition: transform 0.1s, box-shadow 0.2s;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        .game-button:active {
+        .btn:active {
             transform: scale(0.95);
+            box-shadow: 0 5px 10px -5px #667eea;
         }
 
-        /* Сетка для режимов */
+        /* Сетка режимов */
         .modes-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin: 15px 0;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin: 20px 0;
         }
 
-        .mode-card {
+        .mode-btn {
             background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 30px;
             padding: 16px;
             text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.05);
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: all 0.2s;
+            backdrop-filter: blur(5px);
         }
 
-        .mode-card:active {
+        .mode-btn:active {
             transform: translateY(-3px);
             background: rgba(102, 126, 234, 0.2);
+            border-color: #667eea;
         }
 
         .mode-emoji {
-            font-size: 2rem;
+            font-size: 2.2rem;
             margin-bottom: 8px;
         }
 
         .mode-name {
-            font-weight: 600;
+            font-weight: 700;
             margin-bottom: 4px;
+            font-size: 1rem;
         }
 
-        .mode-desc {
-            font-size: 0.7rem;
-            opacity: 0.5;
+        .mode-range {
+            font-size: 0.8rem;
+            opacity: 0.6;
         }
 
         /* История */
-        .history-block {
+        .history {
             background: rgba(0, 0, 0, 0.2);
-            border-radius: 30px;
-            padding: 16px;
-            margin-top: 20px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 40px;
+            padding: 18px;
             text-align: center;
-            font-size: 0.95rem;
-            color: var(--tg-theme-hint-color, #888);
-            border: 1px solid rgba(255, 255, 255, 0.03);
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
-    <div class="app-container">
+    <div class="container">
         <!-- Профиль -->
-        <div class="profile-card">
-            <div class="profile-avatar" id="userAvatar">🎮</div>
-            <div class="profile-info">
-                <div class="profile-name" id="userName">Загрузка...</div>
-                <div class="profile-stats">
-                    <span>🏆 Рейтинг: Новичок</span>
-                    <span>⭐ Уровень 1</span>
+        <div class="glass-card" style="margin-bottom: 16px;">
+            <div class="profile">
+                <div class="avatar" id="userAvatar">👤</div>
+                <div class="user-info">
+                    <h3>Космический странник</h3>
+                    <h2 id="userName">Загрузка...</h2>
+                </div>
+            </div>
+
+            <!-- Статистика -->
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="totalScore">0</div>
+                    <div class="stat-label">Очки</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="gamesPlayed">0</div>
+                    <div class="stat-label">Игры</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="winRate">0%</div>
+                    <div class="stat-label">Побед</div>
                 </div>
             </div>
         </div>
 
-        <!-- Статистика -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-number" id="totalScore">0</div>
-                <div class="stat-label">ОЧКИ</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="gamesCount">0</div>
-                <div class="stat-label">ИГРЫ</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="winRate">0%</div>
-                <div class="stat-label">ПОБЕД</div>
-            </div>
-        </div>
-
         <!-- Навигация -->
-        <div class="nav-scroll" id="gameNav">
+        <div class="nav" id="gameNav">
             <div class="nav-item active" data-game="classic">🎯 Классика</div>
-            <div class="nav-item" data-game="ranges">🎲 Сложность</div>
-            <div class="nav-item" data-game="speed">⚡ Скорость</div>
+            <div class="nav-item" data-game="ranges">🎲 Режимы</div>
+            <div class="nav-item" data-game="speed">⚡ Экстрим</div>
             <div class="nav-item" data-game="math">🧮 Примеры</div>
             <div class="nav-item" data-game="memory">🧠 Память</div>
         </div>
 
         <!-- Игровая область -->
-        <div class="game-card" id="gameContent">
-            <!-- Сюда будет подгружаться игра -->
+        <div class="game-area" id="gameContent">
+            <!-- Загрузится через JS -->
         </div>
 
         <!-- История -->
-        <div class="history-block" id="historyMessage">
-            👋 Выбери игру и начни!
+        <div class="history" id="historyMessage">
+            🌟 Добро пожаловать в NumberQuest!
         </div>
     </div>
 
     <script>
         // Инициализация Telegram
-        const tg = window.Telegram.WebApp;
+        const tg = Telegram.WebApp;
         tg.ready();
         tg.expand();
 
         // Данные пользователя
         const user = tg.initDataUnsafe?.user;
         const userName = user?.first_name || 'Игрок';
-        const userAvatar = user?.username?.charAt(0).toUpperCase() || '🎮';
-        
         document.getElementById('userName').textContent = userName;
-        document.getElementById('userAvatar').textContent = userAvatar;
+        document.getElementById('userAvatar').textContent = userName.charAt(0).toUpperCase();
 
         // Глобальное состояние
         let currentGame = 'classic';
         let totalScore = 0;
         let gamesPlayed = 0;
         let wins = 0;
-        let gameHistory = [];
 
         // Состояния игр
         const games = {
@@ -406,33 +435,34 @@
                 secret: null,
                 min: 1,
                 max: 50,
-                attempts: 0,
-                currentMode: 'easy'
+                mode: 'easy'
             },
             speed: {
                 secret: Math.floor(Math.random() * 100) + 1,
                 attempts: 0,
+                maxAttempts: 5,
                 timeLeft: 20,
                 timer: null
             },
             math: {
                 num1: 0,
                 num2: 0,
-                operation: '+',
                 answer: 0,
-                attempts: 0
+                attempts: 0,
+                maxAttempts: 5
             },
             memory: {
                 number: 0,
                 attempts: 0,
-                maxAttempts: 3
+                maxAttempts: 3,
+                showing: true
             }
         };
 
         // Обновление статистики
         function updateStats() {
             document.getElementById('totalScore').textContent = totalScore;
-            document.getElementById('gamesCount').textContent = gamesPlayed;
+            document.getElementById('gamesPlayed').textContent = gamesPlayed;
             const winPercent = gamesPlayed > 0 ? Math.round((wins / gamesPlayed) * 100) : 0;
             document.getElementById('winRate').textContent = winPercent + '%';
         }
@@ -473,128 +503,123 @@
             attachGameListeners(game);
         }
 
-        // Рендер классической игры
+        // Рендер классики
         function renderClassic() {
             const g = games.classic;
             const progress = (g.attempts / g.maxAttempts) * 100;
             
             return `
                 <div class="game-header">
-                    <span class="game-title">🎯 Классическая</span>
-                    <span class="game-badge">Этаж ${g.level}</span>
+                    <span class="game-title">🎯 Классический режим</span>
+                    <span class="game-badge">Уровень ${g.level}</span>
                 </div>
                 
-                <div class="progress-section">
-                    <div class="progress-label">
-                        <span>Прогресс</span>
-                        <span>${g.attempts}/${g.maxAttempts}</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: ${progress}%">${g.attempts}/${g.maxAttempts}</div>
-                    </div>
+                <div class="progress">
+                    <div class="progress-bar" style="width: ${progress}%">${g.attempts}/${g.maxAttempts}</div>
                 </div>
                 
-                <div class="hint-container">
-                    <div class="hint-main" id="gameHint">🔍</div>
+                <div class="hint">
+                    <div class="hint-main" id="gameHint">🔮</div>
                     <div class="hint-sub" id="rangeHint">от ${g.min} до ${g.max}</div>
                 </div>
                 
-                <div class="input-wrapper">
-                    <input type="number" id="gameInput" class="game-input" placeholder="Число" min="${g.min}" max="${g.max}">
-                    <button class="game-button" id="submitBtn">✓</button>
+                <div class="input-group">
+                    <input type="number" id="gameInput" class="input-field" placeholder="?" min="${g.min}" max="${g.max}">
+                    <button class="btn" id="submitBtn">→</button>
                 </div>
             `;
         }
 
-        // Рендер игры со сложностью
+        // Рендер режимов
         function renderRanges() {
-            const modes = [
-                { emoji: '🌱', name: 'Легкий', range: '1-50', min: 1, max: 50 },
-                { emoji: '🌿', name: 'Средний', range: '1-100', min: 1, max: 100 },
-                { emoji: '🗻', name: 'Сложный', range: '1-500', min: 1, max: 500 },
-                { emoji: '🚀', name: 'Экстрим', range: '1-1000', min: 1, max: 1000 }
-            ];
-            
-            const modesHtml = modes.map(m => `
-                <div class="mode-card" data-min="${m.min}" data-max="${m.max}">
-                    <div class="mode-emoji">${m.emoji}</div>
-                    <div class="mode-name">${m.name}</div>
-                    <div class="mode-desc">${m.range}</div>
-                </div>
-            `).join('');
-            
             return `
                 <div class="game-header">
-                    <span class="game-title">🎲 Выбор сложности</span>
-                    <span class="game-badge">${games.ranges.min}-${games.ranges.max}</span>
+                    <span class="game-title">🎲 Выбери сложность</span>
+                    <span class="game-badge" id="currentRange">1-50</span>
                 </div>
                 
                 <div class="modes-grid" id="modesGrid">
-                    ${modesHtml}
+                    <div class="mode-btn" data-min="1" data-max="50">
+                        <div class="mode-emoji">🌱</div>
+                        <div class="mode-name">Легкий</div>
+                        <div class="mode-range">1-50</div>
+                    </div>
+                    <div class="mode-btn" data-min="1" data-max="100">
+                        <div class="mode-emoji">🌿</div>
+                        <div class="mode-name">Средний</div>
+                        <div class="mode-range">1-100</div>
+                    </div>
+                    <div class="mode-btn" data-min="1" data-max="500">
+                        <div class="mode-emoji">🗻</div>
+                        <div class="mode-name">Сложный</div>
+                        <div class="mode-range">1-500</div>
+                    </div>
+                    <div class="mode-btn" data-min="1" data-max="1000">
+                        <div class="mode-emoji">🚀</div>
+                        <div class="mode-name">Экстрим</div>
+                        <div class="mode-range">1-1000</div>
+                    </div>
                 </div>
                 
-                <div class="hint-container">
+                <div class="hint">
                     <div class="hint-main" id="gameHint">${games.ranges.secret ? '🔢' : '🎯'}</div>
                     <div class="hint-sub" id="rangeHint">${games.ranges.min}-${games.ranges.max}</div>
                 </div>
                 
-                <div class="input-wrapper">
-                    <input type="number" id="gameInput" class="game-input" placeholder="Твой ответ" min="${games.ranges.min}" max="${games.ranges.max}">
-                    <button class="game-button" id="submitBtn">✓</button>
+                <div class="input-group">
+                    <input type="number" id="gameInput" class="input-field" placeholder="?" min="${games.ranges.min}" max="${games.ranges.max}">
+                    <button class="btn" id="submitBtn">→</button>
                 </div>
             `;
         }
 
-        // Рендер скоростной игры
+        // Рендер скорости
         function renderSpeed() {
             return `
                 <div class="game-header">
-                    <span class="game-title">⚡ Скоростная</span>
+                    <span class="game-title">⚡ Скоростной режим</span>
                     <span class="game-badge" id="timerDisplay">${games.speed.timeLeft}с</span>
                 </div>
                 
-                <div class="hint-container">
+                <div class="hint">
                     <div class="hint-main" id="gameHint">⏰</div>
-                    <div class="hint-sub">У тебя ${games.speed.timeLeft} секунд</div>
+                    <div class="hint-sub">Угадай за 20 секунд</div>
                 </div>
                 
-                <div class="input-wrapper">
-                    <input type="number" id="gameInput" class="game-input" placeholder="Число 1-100" min="1" max="100">
-                    <button class="game-button" id="submitBtn">✓</button>
+                <div class="input-group">
+                    <input type="number" id="gameInput" class="input-field" placeholder="?" min="1" max="100">
+                    <button class="btn" id="submitBtn">→</button>
                 </div>
             `;
         }
 
-        // Рендер математической игры
+        // Рендер математики
         function renderMath() {
             if (games.math.num1 === 0) {
                 games.math.num1 = Math.floor(Math.random() * 20) + 1;
                 games.math.num2 = Math.floor(Math.random() * 20) + 1;
-                games.math.operation = Math.random() > 0.5 ? '+' : '-';
-                games.math.answer = games.math.operation === '+' ? 
-                    games.math.num1 + games.math.num2 : 
-                    games.math.num1 - games.math.num2;
+                games.math.answer = games.math.num1 + games.math.num2;
             }
             
             return `
                 <div class="game-header">
                     <span class="game-title">🧮 Математика</span>
-                    <span class="game-badge">Попытка ${games.math.attempts + 1}/5</span>
+                    <span class="game-badge">${games.math.attempts}/${games.math.maxAttempts}</span>
                 </div>
                 
-                <div class="hint-container">
-                    <div class="hint-main" id="gameHint">${games.math.num1} ${games.math.operation} ${games.math.num2} = ?</div>
+                <div class="hint">
+                    <div class="hint-main" id="gameHint">${games.math.num1} + ${games.math.num2} = ?</div>
                     <div class="hint-sub">Реши пример</div>
                 </div>
                 
-                <div class="input-wrapper">
-                    <input type="number" id="gameInput" class="game-input" placeholder="Ответ">
-                    <button class="game-button" id="submitBtn">✓</button>
+                <div class="input-group">
+                    <input type="number" id="gameInput" class="input-field" placeholder="?">
+                    <button class="btn" id="submitBtn">→</button>
                 </div>
             `;
         }
 
-        // Рендер игры на память
+        // Рендер памяти
         function renderMemory() {
             if (games.memory.number === 0) {
                 games.memory.number = Math.floor(Math.random() * 900) + 100;
@@ -602,18 +627,18 @@
             
             return `
                 <div class="game-header">
-                    <span class="game-title">🧠 На память</span>
+                    <span class="game-title">🧠 Игра на память</span>
                     <span class="game-badge">${games.memory.attempts}/${games.memory.maxAttempts}</span>
                 </div>
                 
-                <div class="hint-container">
-                    <div class="hint-main" id="gameHint">${games.memory.number}</div>
-                    <div class="hint-sub">Запомни число и закрой глаза</div>
+                <div class="hint">
+                    <div class="hint-main" id="gameHint">${games.memory.showing ? games.memory.number : '???'}</div>
+                    <div class="hint-sub">${games.memory.showing ? 'Запомни число!' : 'Какое число было?'}</div>
                 </div>
                 
-                <div class="input-wrapper">
-                    <input type="number" id="gameInput" class="game-input" placeholder="Какое число?">
-                    <button class="game-button" id="submitBtn">✓</button>
+                <div class="input-group">
+                    <input type="number" id="gameInput" class="input-field" placeholder="?">
+                    <button class="btn" id="submitBtn">→</button>
                 </div>
             `;
         }
@@ -621,80 +646,203 @@
         // Прикрепление обработчиков
         function attachGameListeners(game) {
             if (game === 'classic') {
-                document.getElementById('submitBtn').addEventListener('click', () => {
-                    const input = document.getElementById('gameInput');
-                    const value = parseInt(input.value);
-                    if (!value) return;
-                    
-                    const g = games.classic;
-                    g.attempts++;
-                    
-                    if (value === g.secret) {
-                        // Победа
-                        totalScore += 25;
-                        gamesPlayed++;
-                        wins++;
-                        g.level++;
-                        g.secret = Math.floor(Math.random() * (g.max - g.min + 1)) + g.min;
-                        g.attempts = 0;
-                        document.getElementById('gameHint').textContent = '🎉 ПОБЕДА!';
-                        document.getElementById('historyMessage').textContent = '🔥 Ты угадал! +25 очков';
-                        updateStats();
-                        setTimeout(() => loadGame('classic'), 1500);
-                    } else {
-                        // Подсказка
-                        const hint = value < g.secret ? '👉 Больше' : '👈 Меньше';
-                        document.getElementById('gameHint').textContent = hint;
-                        document.getElementById('historyMessage').textContent = `❌ Было ${value}, ${hint}`;
-                    }
-                    
-                    if (g.attempts >= g.maxAttempts) {
-                        g.secret = Math.floor(Math.random() * (g.max - g.min + 1)) + g.min;
-                        g.attempts = 0;
-                        document.getElementById('historyMessage').textContent = '🔄 Новый этаж!';
-                    }
-                    
-                    input.value = '';
-                    loadGame('classic');
+                document.getElementById('submitBtn').addEventListener('click', classicHandler);
+                document.getElementById('gameInput').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') classicHandler();
                 });
             }
             
             if (game === 'ranges') {
-                // Выбор сложности
-                document.querySelectorAll('.mode-card').forEach(card => {
-                    card.addEventListener('click', () => {
-                        const min = parseInt(card.dataset.min);
-                        const max = parseInt(card.dataset.max);
+                // Выбор режима
+                document.querySelectorAll('.mode-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const min = parseInt(btn.dataset.min);
+                        const max = parseInt(btn.dataset.max);
                         games.ranges.min = min;
                         games.ranges.max = max;
                         games.ranges.secret = Math.floor(Math.random() * (max - min + 1)) + min;
+                        document.getElementById('currentRange').textContent = `${min}-${max}`;
                         document.getElementById('rangeHint').textContent = `${min}-${max}`;
-                        document.getElementById('gameHint').textContent = '🎲 Число загадано!';
-                        document.getElementById('historyMessage').textContent = `Сложность ${min}-${max}`;
+                        document.getElementById('gameHint').textContent = '🎲';
+                        document.getElementById('historyMessage').textContent = `Режим ${min}-${max}`;
                     });
                 });
                 
-                document.getElementById('submitBtn').addEventListener('click', () => {
-                    const input = document.getElementById('gameInput');
-                    const value = parseInt(input.value);
-                    if (!value || !games.ranges.secret) return;
-                    
-                    if (value === games.ranges.secret) {
-                        totalScore += 30;
-                        gamesPlayed++;
-                        wins++;
-                        document.getElementById('gameHint').textContent = '🎉 УГАДАЛ!';
-                        document.getElementById('historyMessage').textContent = '+30 очков!';
-                        games.ranges.secret = null;
-                        updateStats();
-                    } else {
-                        const hint = value < games.ranges.secret ? '👉 Больше' : '👈 Меньше';
-                        document.getElementById('gameHint').textContent = hint;
-                        document.getElementById('historyMessage').textContent = `❌ ${value} - ${hint}`;
-                    }
-                    input.value = '';
-                });
+                document.getElementById('submitBtn').addEventListener('click', rangesHandler);
             }
+            
+            if (game === 'speed') {
+                // Таймер
+                if (games.speed.timer) clearInterval(games.speed.timer);
+                games.speed.timeLeft = 20;
+                games.speed.timer = setInterval(() => {
+                    games.speed.timeLeft--;
+                    document.getElementById('timerDisplay').textContent = games.speed.timeLeft + 'с';
+                    
+                    if (games.speed.timeLeft <= 0) {
+                        clearInterval(games.speed.timer);
+                        document.getElementById('gameHint').textContent = '⏰ Время вышло!';
+                        document.getElementById('historyMessage').textContent = 'Попробуй снова!';
+                        games.speed.secret = Math.floor(Math.random() * 100) + 1;
+                        games.speed.timeLeft = 20;
+                    }
+                }, 1000);
+                
+                document.getElementById('submitBtn').addEventListener('click', speedHandler);
+            }
+            
+            if (game === 'math') {
+                document.getElementById('submitBtn').addEventListener('click', mathHandler);
+            }
+            
+            if (game === 'memory') {
+                // Показываем число на 3 секунды
+                games.memory.showing = true;
+                setTimeout(() => {
+                    games.memory.showing = false;
+                    loadGame('memory');
+                }, 3000);
+                
+                document.getElementById('submitBtn').addEventListener('click', memoryHandler);
+            }
+        }
+
+        // Обработчики игр
+        function classicHandler() {
+            const input = document.getElementById('gameInput');
+            const value = parseInt(input.value);
+            if (!value) return;
+            
+            const g = games.classic;
+            g.attempts++;
+            
+            if (value === g.secret) {
+                totalScore += 25;
+                gamesPlayed++;
+                wins++;
+                g.level++;
+                g.secret = Math.floor(Math.random() * 100) + 1;
+                g.attempts = 0;
+                document.getElementById('gameHint').textContent = '🎉 ПОБЕДА!';
+                document.getElementById('historyMessage').textContent = '+25 очков!';
+                updateStats();
+                setTimeout(() => loadGame('classic'), 1000);
+            } else {
+                const hint = value < g.secret ? '👉 Больше' : '👈 Меньше';
+                document.getElementById('gameHint').textContent = hint;
+                document.getElementById('historyMessage').textContent = `Было ${value}, ${hint}`;
+            }
+            
+            if (g.attempts >= g.maxAttempts) {
+                g.secret = Math.floor(Math.random() * 100) + 1;
+                g.attempts = 0;
+                document.getElementById('historyMessage').textContent = '🔄 Новый уровень!';
+            }
+            
+            input.value = '';
+            loadGame('classic');
+        }
+
+        function rangesHandler() {
+            const input = document.getElementById('gameInput');
+            const value = parseInt(input.value);
+            if (!value || !games.ranges.secret) return;
+            
+            if (value === games.ranges.secret) {
+                totalScore += 30;
+                gamesPlayed++;
+                wins++;
+                document.getElementById('gameHint').textContent = '🎉 УГАДАЛ!';
+                document.getElementById('historyMessage').textContent = '+30 очков!';
+                games.ranges.secret = null;
+                updateStats();
+                setTimeout(() => loadGame('ranges'), 1000);
+            } else {
+                const hint = value < games.ranges.secret ? '👉 Больше' : '👈 Меньше';
+                document.getElementById('gameHint').textContent = hint;
+                document.getElementById('historyMessage').textContent = `${value} - ${hint}`;
+            }
+            input.value = '';
+        }
+
+        function speedHandler() {
+            const input = document.getElementById('gameInput');
+            const value = parseInt(input.value);
+            if (!value) return;
+            
+            if (value === games.speed.secret) {
+                totalScore += 40;
+                gamesPlayed++;
+                wins++;
+                clearInterval(games.speed.timer);
+                document.getElementById('gameHint').textContent = '⚡ СУПЕР!';
+                document.getElementById('historyMessage').textContent = '+40 очков!';
+                updateStats();
+                setTimeout(() => {
+                    games.speed.secret = Math.floor(Math.random() * 100) + 1;
+                    loadGame('speed');
+                }, 1500);
+            } else {
+                document.getElementById('gameHint').textContent = value < games.speed.secret ? '👉' : '👈';
+                document.getElementById('historyMessage').textContent = 'Не угадал!';
+            }
+            input.value = '';
+        }
+
+        function mathHandler() {
+            const input = document.getElementById('gameInput');
+            const value = parseInt(input.value);
+            if (!value) return;
+            
+            if (value === games.math.answer) {
+                totalScore += 20;
+                gamesPlayed++;
+                wins++;
+                document.getElementById('gameHint').textContent = '✅ Правильно!';
+                document.getElementById('historyMessage').textContent = '+20 очков!';
+                games.math.num1 = 0;
+                games.math.attempts = 0;
+                updateStats();
+                setTimeout(() => loadGame('math'), 1000);
+            } else {
+                games.math.attempts++;
+                document.getElementById('gameHint').textContent = '❌ Неправильно';
+                document.getElementById('historyMessage').textContent = `Правильно: ${games.math.answer}`;
+                
+                if (games.math.attempts >= games.math.maxAttempts) {
+                    games.math.num1 = 0;
+                    games.math.attempts = 0;
+                }
+            }
+            input.value = '';
+        }
+
+        function memoryHandler() {
+            const input = document.getElementById('gameInput');
+            const value = parseInt(input.value);
+            if (!value) return;
+            
+            if (value === games.memory.number) {
+                totalScore += 35;
+                gamesPlayed++;
+                wins++;
+                document.getElementById('gameHint').textContent = '🧠 Отлично!';
+                document.getElementById('historyMessage').textContent = '+35 очков!';
+                games.memory.number = 0;
+                games.memory.attempts = 0;
+                updateStats();
+                setTimeout(() => loadGame('memory'), 1000);
+            } else {
+                games.memory.attempts++;
+                document.getElementById('gameHint').textContent = '❌ Неверно';
+                document.getElementById('historyMessage').textContent = `Было: ${games.memory.number}`;
+                
+                if (games.memory.attempts >= games.memory.maxAttempts) {
+                    games.memory.number = 0;
+                    games.memory.attempts = 0;
+                }
+            }
+            input.value = '';
         }
 
         // Запуск
