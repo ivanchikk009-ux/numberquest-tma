@@ -3,65 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NumberQuest · Космический</title>
+    <title>NumberQuest · Игровой портал</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
 
         body {
-            min-height: 100vh;
-            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
             color: white;
+            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 16px;
-            position: relative;
-            overflow-x: hidden;
-        }
-
-        /* Звездный фон */
-        body::before {
-            content: '';
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(2px 2px at 20px 30px, #fff, rgba(0,0,0,0)),
-                        radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)),
-                        radial-gradient(2px 2px at 80px 120px, #fff, rgba(0,0,0,0));
-            background-size: 200px 200px;
-            opacity: 0.3;
-            animation: stars 60s linear infinite;
-        }
-
-        @keyframes stars {
-            from { transform: translateY(0); }
-            to { transform: translateY(-200px); }
         }
 
         .container {
             max-width: 420px;
             width: 100%;
-            position: relative;
-            z-index: 10;
         }
 
-        /* Карточка с эффектом стекла */
-        .glass-card {
-            background: rgba(255, 255, 255, 0.05);
+        /* Карточка */
+        .card {
+            background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 48px;
-            padding: 24px 20px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+            padding: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
         }
 
         /* Профиль */
@@ -73,65 +47,51 @@
         }
 
         .avatar {
-            width: 64px;
-            height: 64px;
-            background: linear-gradient(135deg, #00d2ff, #3a7bd5);
-            border-radius: 32px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+            border-radius: 30px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 32px;
-            font-weight: 800;
-            box-shadow: 0 15px 30px -10px #00d2ff80;
-            border: 2px solid rgba(255, 255, 255, 0.3);
+            font-size: 28px;
+            font-weight: bold;
         }
 
         .user-info h3 {
-            font-size: 1rem;
+            font-size: 0.9rem;
             opacity: 0.7;
-            font-weight: 400;
             margin-bottom: 4px;
         }
 
         .user-info h2 {
-            font-size: 1.6rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #fff, #aaddff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-size: 1.5rem;
+            font-weight: bold;
         }
 
         /* Статистика */
         .stats {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: 1fr 1fr 1fr;
             gap: 10px;
             margin-bottom: 24px;
         }
 
-        .stat-item {
+        .stat {
             background: rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 28px;
-            padding: 16px 5px;
+            border-radius: 24px;
+            padding: 12px 5px;
             text-align: center;
         }
 
         .stat-value {
-            font-size: 2rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #FFD700, #FFA500);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            line-height: 1;
-            margin-bottom: 4px;
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #ffd700;
         }
 
         .stat-label {
             font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
             opacity: 0.6;
         }
 
@@ -140,144 +100,114 @@
             display: flex;
             gap: 8px;
             overflow-x: auto;
-            padding: 5px 2px 15px 2px;
-            scrollbar-width: none;
-        }
-
-        .nav::-webkit-scrollbar {
-            display: none;
+            margin-bottom: 20px;
+            padding-bottom: 5px;
         }
 
         .nav-item {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 14px 24px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 12px 24px;
             border-radius: 40px;
-            font-weight: 600;
-            font-size: 0.95rem;
             white-space: nowrap;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
-            color: rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .nav-item.active {
             background: linear-gradient(135deg, #667eea, #764ba2);
             border-color: transparent;
-            color: white;
-            box-shadow: 0 10px 20px -5px #667eea80;
-            transform: translateY(-2px);
         }
 
-        /* Игровая карточка */
+        /* Игровая область */
         .game-area {
-            background: rgba(0, 0, 0, 0.2);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.3);
             border-radius: 40px;
             padding: 24px;
-            margin: 10px 0 20px 0;
+            margin-bottom: 20px;
         }
 
         .game-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
         }
 
         .game-title {
-            font-size: 1.5rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #fff, #c0c0ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-size: 1.3rem;
+            font-weight: bold;
         }
 
         .game-badge {
-            background: linear-gradient(135deg, #FF6B6B, #FF8E53);
-            padding: 8px 16px;
+            background: rgba(255, 215, 0, 0.2);
+            padding: 6px 16px;
             border-radius: 30px;
-            font-weight: 700;
-            font-size: 0.9rem;
-            box-shadow: 0 5px 15px -5px #FF6B6B;
+            color: #ffd700;
         }
 
         /* Прогресс */
         .progress {
-            background: rgba(0, 0, 0, 0.3);
-            height: 36px;
-            border-radius: 30px;
-            padding: 4px;
+            background: rgba(0, 0, 0, 0.4);
+            height: 30px;
+            border-radius: 20px;
+            padding: 3px;
             margin: 20px 0;
-            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .progress-bar {
             height: 100%;
-            background: linear-gradient(90deg, #667eea, #764ba2, #ff6b6b);
-            border-radius: 30px;
-            transition: width 0.3s ease;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: flex-end;
             padding-right: 15px;
-            font-weight: 700;
             font-size: 0.9rem;
-            color: white;
-            text-shadow: 0 2px 5px rgba(0,0,0,0.3);
-            box-shadow: 0 0 20px #667eea;
+            font-weight: bold;
+            transition: width 0.3s;
         }
 
         /* Подсказка */
         .hint {
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
-            border: 1px solid rgba(102, 126, 234, 0.3);
+            background: rgba(102, 126, 234, 0.2);
             border-radius: 40px;
-            padding: 28px;
+            padding: 30px;
             text-align: center;
             margin: 20px 0;
-            backdrop-filter: blur(5px);
+            border: 1px solid rgba(102, 126, 234, 0.3);
         }
 
         .hint-main {
-            font-size: 3.5rem;
-            font-weight: 800;
-            margin-bottom: 8px;
-            text-shadow: 0 0 20px rgba(255,255,255,0.5);
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 10px;
         }
 
         .hint-sub {
             font-size: 1rem;
             opacity: 0.8;
-            letter-spacing: 1px;
         }
 
-        /* Поле ввода */
+        /* Ввод */
         .input-group {
             display: flex;
-            gap: 12px;
-            margin: 20px 0;
+            gap: 10px;
         }
 
         .input-field {
             flex: 1;
             background: rgba(0, 0, 0, 0.3);
-            border: 2px solid rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
             border-radius: 40px;
-            padding: 18px 24px;
-            font-size: 1.4rem;
+            padding: 16px 20px;
+            font-size: 1.2rem;
             color: white;
-            font-weight: 600;
             text-align: center;
             outline: none;
-            backdrop-filter: blur(5px);
         }
 
         .input-field:focus {
             border-color: #667eea;
-            box-shadow: 0 0 20px #667eea80;
         }
 
         .btn {
@@ -286,102 +216,83 @@
             border-radius: 40px;
             padding: 0 30px;
             color: white;
-            font-weight: 700;
+            font-weight: bold;
             font-size: 1.2rem;
             cursor: pointer;
-            box-shadow: 0 10px 20px -5px #667eea80;
-            transition: transform 0.1s, box-shadow 0.2s;
-            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .btn:active {
             transform: scale(0.95);
-            box-shadow: 0 5px 10px -5px #667eea;
         }
 
-        .btn:disabled {
-            opacity: 0.5;
-            pointer-events: none;
+        /* История */
+        .history {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 40px;
+            padding: 16px;
+            text-align: center;
+            font-size: 1rem;
+            opacity: 0.8;
         }
 
         /* Сетка режимов */
         .modes-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
             margin: 20px 0;
         }
 
-        .mode-btn {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        .mode-item {
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 30px;
-            padding: 16px;
+            padding: 15px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.2s;
-            backdrop-filter: blur(5px);
         }
 
-        .mode-btn:active {
-            transform: translateY(-3px);
-            background: rgba(102, 126, 234, 0.2);
-            border-color: #667eea;
+        .mode-item:active {
+            background: rgba(102, 126, 234, 0.3);
         }
 
         .mode-emoji {
-            font-size: 2.2rem;
-            margin-bottom: 8px;
+            font-size: 2rem;
+            margin-bottom: 5px;
         }
 
         .mode-name {
-            font-weight: 700;
-            margin-bottom: 4px;
-            font-size: 1rem;
+            font-weight: 600;
         }
 
         .mode-range {
             font-size: 0.8rem;
             opacity: 0.6;
         }
-
-        /* История */
-        .history {
-            background: rgba(0, 0, 0, 0.2);
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 40px;
-            padding: 18px;
-            text-align: center;
-            font-size: 1rem;
-            color: rgba(255, 255, 255, 0.7);
-            margin-top: 10px;
-        }
     </style>
 </head>
 <body>
     <div class="container">
         <!-- Профиль -->
-        <div class="glass-card" style="margin-bottom: 16px;">
+        <div class="card" style="margin-bottom: 16px;">
             <div class="profile">
                 <div class="avatar" id="userAvatar">👤</div>
                 <div class="user-info">
-                    <h3>Космический странник</h3>
+                    <h3>Игрок</h3>
                     <h2 id="userName">Загрузка...</h2>
                 </div>
             </div>
 
             <!-- Статистика -->
             <div class="stats">
-                <div class="stat-item">
+                <div class="stat">
                     <div class="stat-value" id="totalScore">0</div>
                     <div class="stat-label">ОЧКИ</div>
                 </div>
-                <div class="stat-item">
+                <div class="stat">
                     <div class="stat-value" id="gamesPlayed">0</div>
                     <div class="stat-label">ИГРЫ</div>
                 </div>
-                <div class="stat-item">
+                <div class="stat">
                     <div class="stat-value" id="winRate">0%</div>
                     <div class="stat-label">ПОБЕД</div>
                 </div>
@@ -397,35 +308,34 @@
             <div class="nav-item" data-game="memory">🧠 Память</div>
         </div>
 
-        <!-- Игровая область -->
+        <!-- Игра -->
         <div class="game-area" id="gameContent">
-            <!-- Загрузится через JS -->
+            <!-- Сюда загружается игра -->
         </div>
 
         <!-- История -->
         <div class="history" id="historyMessage">
-            🌟 Добро пожаловать в NumberQuest!
+            👋 Добро пожаловать в NumberQuest!
         </div>
     </div>
 
     <script>
-        // Инициализация Telegram
+        // Telegram
         const tg = Telegram.WebApp;
         tg.ready();
         tg.expand();
 
-        // Данные пользователя
+        // Пользователь
         const user = tg.initDataUnsafe?.user;
         const userName = user?.first_name || 'Игрок';
         document.getElementById('userName').textContent = userName;
         document.getElementById('userAvatar').textContent = userName.charAt(0).toUpperCase();
 
-        // Глобальное состояние
+        // Глобальные переменные
         let currentGame = 'classic';
         let totalScore = 0;
         let gamesPlayed = 0;
         let wins = 0;
-        let memoryTimer = null;
 
         // Состояния игр
         const games = {
@@ -438,31 +348,26 @@
                 level: 1
             },
             ranges: {
-                secret: null,
+                secret: Math.floor(Math.random() * 50) + 1,
                 min: 1,
-                max: 50,
-                mode: 'easy'
+                max: 50
             },
             speed: {
                 secret: Math.floor(Math.random() * 100) + 1,
                 attempts: 0,
-                maxAttempts: 5,
-                timeLeft: 20,
-                timer: null
+                maxAttempts: 5
             },
             math: {
-                num1: 0,
-                num2: 0,
+                num1: Math.floor(Math.random() * 20) + 1,
+                num2: Math.floor(Math.random() * 20) + 1,
                 answer: 0,
                 attempts: 0,
                 maxAttempts: 5
             },
             memory: {
-                number: 0,
+                number: Math.floor(Math.random() * 900) + 100,
                 attempts: 0,
-                maxAttempts: 3,
-                showing: true,
-                canInput: false
+                maxAttempts: 3
             }
         };
 
@@ -474,25 +379,12 @@
             document.getElementById('winRate').textContent = winPercent + '%';
         }
 
-        // Очистка таймеров при смене игры
-        function clearGameTimers() {
-            if (games.speed.timer) {
-                clearInterval(games.speed.timer);
-                games.speed.timer = null;
-            }
-            if (memoryTimer) {
-                clearTimeout(memoryTimer);
-                memoryTimer = null;
-            }
-        }
-
         // Навигация
         document.querySelectorAll('.nav-item').forEach(item => {
             item.addEventListener('click', () => {
                 document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
                 item.classList.add('active');
                 currentGame = item.dataset.game;
-                clearGameTimers();
                 loadGame(currentGame);
             });
         });
@@ -503,46 +395,42 @@
             
             switch(game) {
                 case 'classic':
-                    html = renderClassic();
+                    html = getClassicHTML();
                     break;
                 case 'ranges':
-                    html = renderRanges();
+                    html = getRangesHTML();
                     break;
                 case 'speed':
-                    html = renderSpeed();
+                    html = getSpeedHTML();
                     break;
                 case 'math':
-                    html = renderMath();
+                    html = getMathHTML();
                     break;
                 case 'memory':
-                    html = renderMemory();
+                    html = getMemoryHTML();
                     break;
             }
             
             document.getElementById('gameContent').innerHTML = html;
-            attachGameListeners(game);
+            attachEvents(game);
         }
 
-        // Рендер классики
-        function renderClassic() {
+        // HTML для каждой игры
+        function getClassicHTML() {
             const g = games.classic;
             const progress = (g.attempts / g.maxAttempts) * 100;
-            
             return `
                 <div class="game-header">
-                    <span class="game-title">🎯 Классический режим</span>
+                    <span class="game-title">🎯 Классика</span>
                     <span class="game-badge">Уровень ${g.level}</span>
                 </div>
-                
                 <div class="progress">
                     <div class="progress-bar" style="width: ${progress}%">${g.attempts}/${g.maxAttempts}</div>
                 </div>
-                
                 <div class="hint">
-                    <div class="hint-main" id="gameHint">🔮</div>
-                    <div class="hint-sub" id="rangeHint">от ${g.min} до ${g.max}</div>
+                    <div class="hint-main" id="gameHint">🔍</div>
+                    <div class="hint-sub" id="rangeHint">${g.min}-${g.max}</div>
                 </div>
-                
                 <div class="input-group">
                     <input type="number" id="gameInput" class="input-field" placeholder="?" min="${g.min}" max="${g.max}">
                     <button class="btn" id="submitBtn">→</button>
@@ -550,42 +438,39 @@
             `;
         }
 
-        // Рендер режимов
-        function renderRanges() {
+        function getRangesHTML() {
+            const g = games.ranges;
             return `
                 <div class="game-header">
-                    <span class="game-title">🎲 Выбери сложность</span>
-                    <span class="game-badge" id="currentRange">1-50</span>
+                    <span class="game-title">🎲 Режимы</span>
+                    <span class="game-badge" id="currentRange">${g.min}-${g.max}</span>
                 </div>
-                
                 <div class="modes-grid" id="modesGrid">
-                    <div class="mode-btn" data-min="1" data-max="50">
+                    <div class="mode-item" data-min="1" data-max="50">
                         <div class="mode-emoji">🌱</div>
                         <div class="mode-name">Легкий</div>
                         <div class="mode-range">1-50</div>
                     </div>
-                    <div class="mode-btn" data-min="1" data-max="100">
+                    <div class="mode-item" data-min="1" data-max="100">
                         <div class="mode-emoji">🌿</div>
                         <div class="mode-name">Средний</div>
                         <div class="mode-range">1-100</div>
                     </div>
-                    <div class="mode-btn" data-min="1" data-max="500">
+                    <div class="mode-item" data-min="1" data-max="500">
                         <div class="mode-emoji">🗻</div>
                         <div class="mode-name">Сложный</div>
                         <div class="mode-range">1-500</div>
                     </div>
-                    <div class="mode-btn" data-min="1" data-max="1000">
+                    <div class="mode-item" data-min="1" data-max="1000">
                         <div class="mode-emoji">🚀</div>
                         <div class="mode-name">Экстрим</div>
                         <div class="mode-range">1-1000</div>
                     </div>
                 </div>
-                
                 <div class="hint">
-                    <div class="hint-main" id="gameHint">${games.ranges.secret ? '🔢' : '🎯'}</div>
+                    <div class="hint-main" id="gameHint">${games.ranges.secret || '🎯'}</div>
                     <div class="hint-sub" id="rangeHint">${games.ranges.min}-${games.ranges.max}</div>
                 </div>
-                
                 <div class="input-group">
                     <input type="number" id="gameInput" class="input-field" placeholder="?" min="${games.ranges.min}" max="${games.ranges.max}">
                     <button class="btn" id="submitBtn">→</button>
@@ -593,19 +478,16 @@
             `;
         }
 
-        // Рендер скорости
-        function renderSpeed() {
+        function getSpeedHTML() {
             return `
                 <div class="game-header">
-                    <span class="game-title">⚡ Скоростной режим</span>
-                    <span class="game-badge" id="timerDisplay">${games.speed.timeLeft}с</span>
+                    <span class="game-title">⚡ Экстрим</span>
+                    <span class="game-badge">5 попыток</span>
                 </div>
-                
                 <div class="hint">
-                    <div class="hint-main" id="gameHint">⏰</div>
-                    <div class="hint-sub">Угадай за 20 секунд</div>
+                    <div class="hint-main" id="gameHint">⚡</div>
+                    <div class="hint-sub">Угадай число 1-100</div>
                 </div>
-                
                 <div class="input-group">
                     <input type="number" id="gameInput" class="input-field" placeholder="?" min="1" max="100">
                     <button class="btn" id="submitBtn">→</button>
@@ -613,25 +495,18 @@
             `;
         }
 
-        // Рендер математики
-        function renderMath() {
-            if (games.math.num1 === 0) {
-                games.math.num1 = Math.floor(Math.random() * 20) + 1;
-                games.math.num2 = Math.floor(Math.random() * 20) + 1;
-                games.math.answer = games.math.num1 + games.math.num2;
-            }
-            
+        function getMathHTML() {
+            const g = games.math;
+            g.answer = g.num1 + g.num2;
             return `
                 <div class="game-header">
-                    <span class="game-title">🧮 Математика</span>
-                    <span class="game-badge">${games.math.attempts}/${games.math.maxAttempts}</span>
+                    <span class="game-title">🧮 Примеры</span>
+                    <span class="game-badge">${g.attempts}/${g.maxAttempts}</span>
                 </div>
-                
                 <div class="hint">
-                    <div class="hint-main" id="gameHint">${games.math.num1} + ${games.math.num2} = ?</div>
+                    <div class="hint-main" id="gameHint">${g.num1} + ${g.num2} = ?</div>
                     <div class="hint-sub">Реши пример</div>
                 </div>
-                
                 <div class="input-group">
                     <input type="number" id="gameInput" class="input-field" placeholder="?">
                     <button class="btn" id="submitBtn">→</button>
@@ -639,46 +514,33 @@
             `;
         }
 
-        // Рендер памяти
-        function renderMemory() {
-            if (games.memory.number === 0) {
-                games.memory.number = Math.floor(Math.random() * 900) + 100;
-                games.memory.showing = true;
-                games.memory.canInput = false;
-                games.memory.attempts = 0;
-            }
-            
+        function getMemoryHTML() {
+            const g = games.memory;
             return `
                 <div class="game-header">
-                    <span class="game-title">🧠 Игра на память</span>
-                    <span class="game-badge">${games.memory.attempts}/${games.memory.maxAttempts}</span>
+                    <span class="game-title">🧠 Память</span>
+                    <span class="game-badge">${g.attempts}/${g.maxAttempts}</span>
                 </div>
-                
                 <div class="hint">
-                    <div class="hint-main" id="gameHint">${games.memory.showing ? games.memory.number : '???'}</div>
-                    <div class="hint-sub">${games.memory.showing ? 'Запомни число! (3 сек)' : 'Какое число было?'}</div>
+                    <div class="hint-main" id="gameHint">${g.number}</div>
+                    <div class="hint-sub">Запомни число!</div>
                 </div>
-                
                 <div class="input-group">
-                    <input type="number" id="gameInput" class="input-field" placeholder="?" ${!games.memory.canInput ? 'disabled' : ''}>
-                    <button class="btn" id="submitBtn" ${!games.memory.canInput ? 'disabled' : ''}>→</button>
+                    <input type="number" id="gameInput" class="input-field" placeholder="?">
+                    <button class="btn" id="submitBtn">→</button>
                 </div>
             `;
         }
 
-        // Прикрепление обработчиков
-        function attachGameListeners(game) {
+        // Прикрепление событий
+        function attachEvents(game) {
             if (game === 'classic') {
-                document.getElementById('submitBtn').addEventListener('click', classicHandler);
-                document.getElementById('gameInput').addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') classicHandler();
-                });
+                document.getElementById('submitBtn').onclick = classicHandler;
             }
-            
-            if (game === 'ranges') {
+            else if (game === 'ranges') {
                 // Выбор режима
-                document.querySelectorAll('.mode-btn').forEach(btn => {
-                    btn.addEventListener('click', () => {
+                document.querySelectorAll('.mode-item').forEach(btn => {
+                    btn.onclick = () => {
                         const min = parseInt(btn.dataset.min);
                         const max = parseInt(btn.dataset.max);
                         games.ranges.min = min;
@@ -686,58 +548,20 @@
                         games.ranges.secret = Math.floor(Math.random() * (max - min + 1)) + min;
                         document.getElementById('currentRange').textContent = `${min}-${max}`;
                         document.getElementById('rangeHint').textContent = `${min}-${max}`;
-                        document.getElementById('gameHint').textContent = '🎲';
+                        document.getElementById('gameHint').textContent = '🎯';
                         document.getElementById('historyMessage').textContent = `Режим ${min}-${max}`;
-                    });
+                    };
                 });
-                
-                document.getElementById('submitBtn').addEventListener('click', rangesHandler);
+                document.getElementById('submitBtn').onclick = rangesHandler;
             }
-            
-            if (game === 'speed') {
-                // Таймер
-                if (games.speed.timer) clearInterval(games.speed.timer);
-                games.speed.timeLeft = 20;
-                games.speed.timer = setInterval(() => {
-                    games.speed.timeLeft--;
-                    const timerDisplay = document.getElementById('timerDisplay');
-                    if (timerDisplay) {
-                        timerDisplay.textContent = games.speed.timeLeft + 'с';
-                    }
-                    
-                    if (games.speed.timeLeft <= 0) {
-                        clearInterval(games.speed.timer);
-                        games.speed.timer = null;
-                        document.getElementById('gameHint').textContent = '⏰ Время вышло!';
-                        document.getElementById('historyMessage').textContent = 'Попробуй снова!';
-                        games.speed.secret = Math.floor(Math.random() * 100) + 1;
-                    }
-                }, 1000);
-                
-                document.getElementById('submitBtn').addEventListener('click', speedHandler);
+            else if (game === 'speed') {
+                document.getElementById('submitBtn').onclick = speedHandler;
             }
-            
-            if (game === 'math') {
-                document.getElementById('submitBtn').addEventListener('click', mathHandler);
+            else if (game === 'math') {
+                document.getElementById('submitBtn').onclick = mathHandler;
             }
-            
-            if (game === 'memory') {
-                // Сбрасываем состояние памяти
-                games.memory.showing = true;
-                games.memory.canInput = false;
-                
-                // Таймер на показ числа
-                if (memoryTimer) clearTimeout(memoryTimer);
-                memoryTimer = setTimeout(() => {
-                    games.memory.showing = false;
-                    games.memory.canInput = true;
-                    loadGame('memory');
-                }, 3000);
-                
-                document.getElementById('submitBtn').addEventListener('click', memoryHandler);
-                document.getElementById('gameInput').addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter' && games.memory.canInput) memoryHandler();
-                });
+            else if (game === 'memory') {
+                document.getElementById('submitBtn').onclick = memoryHandler;
             }
         }
 
@@ -748,7 +572,6 @@
             if (!value) return;
             
             const g = games.classic;
-            g.attempts++;
             
             if (value === g.secret) {
                 totalScore += 25;
@@ -757,19 +580,18 @@
                 g.level++;
                 g.secret = Math.floor(Math.random() * 100) + 1;
                 g.attempts = 0;
-                document.getElementById('gameHint').textContent = '🎉 ПОБЕДА!';
-                document.getElementById('historyMessage').textContent = '+25 очков!';
+                document.getElementById('historyMessage').textContent = '🎉 Победа! +25 очков';
                 updateStats();
-                setTimeout(() => loadGame('classic'), 1000);
             } else {
-                const hint = value < g.secret ? '👉 Больше' : '👈 Меньше';
+                g.attempts++;
+                const hint = value < g.secret ? 'Больше' : 'Меньше';
                 document.getElementById('gameHint').textContent = hint;
-                document.getElementById('historyMessage').textContent = `Было ${value}, ${hint}`;
+                document.getElementById('historyMessage').textContent = `❌ ${value} - ${hint}`;
                 
                 if (g.attempts >= g.maxAttempts) {
                     g.secret = Math.floor(Math.random() * 100) + 1;
                     g.attempts = 0;
-                    document.getElementById('historyMessage').textContent = '🔄 Новый уровень!';
+                    document.getElementById('historyMessage').textContent = '🔄 Новое число';
                 }
             }
             
@@ -786,17 +608,17 @@
                 totalScore += 30;
                 gamesPlayed++;
                 wins++;
-                document.getElementById('gameHint').textContent = '🎉 УГАДАЛ!';
-                document.getElementById('historyMessage').textContent = '+30 очков!';
+                document.getElementById('historyMessage').textContent = '🎉 Угадал! +30 очков';
                 games.ranges.secret = null;
                 updateStats();
-                setTimeout(() => loadGame('ranges'), 1000);
             } else {
-                const hint = value < games.ranges.secret ? '👉 Больше' : '👈 Меньше';
+                const hint = value < games.ranges.secret ? 'Больше' : 'Меньше';
                 document.getElementById('gameHint').textContent = hint;
                 document.getElementById('historyMessage').textContent = `${value} - ${hint}`;
             }
+            
             input.value = '';
+            loadGame('ranges');
         }
 
         function speedHandler() {
@@ -804,26 +626,30 @@
             const value = parseInt(input.value);
             if (!value) return;
             
-            if (value === games.speed.secret) {
+            const g = games.speed;
+            
+            if (value === g.secret) {
                 totalScore += 40;
                 gamesPlayed++;
                 wins++;
-                if (games.speed.timer) {
-                    clearInterval(games.speed.timer);
-                    games.speed.timer = null;
-                }
-                document.getElementById('gameHint').textContent = '⚡ СУПЕР!';
-                document.getElementById('historyMessage').textContent = '+40 очков!';
+                document.getElementById('historyMessage').textContent = '⚡ Супер! +40 очков';
+                g.secret = Math.floor(Math.random() * 100) + 1;
+                g.attempts = 0;
                 updateStats();
-                setTimeout(() => {
-                    games.speed.secret = Math.floor(Math.random() * 100) + 1;
-                    loadGame('speed');
-                }, 1500);
             } else {
-                document.getElementById('gameHint').textContent = value < games.speed.secret ? '👉' : '👈';
-                document.getElementById('historyMessage').textContent = 'Не угадал!';
+                g.attempts++;
+                document.getElementById('gameHint').textContent = value < g.secret ? '👉' : '👈';
+                document.getElementById('historyMessage').textContent = `Осталось ${g.maxAttempts - g.attempts} попыток`;
+                
+                if (g.attempts >= g.maxAttempts) {
+                    g.secret = Math.floor(Math.random() * 100) + 1;
+                    g.attempts = 0;
+                    document.getElementById('historyMessage').textContent = '🔄 Новое число';
+                }
             }
+            
             input.value = '';
+            loadGame('speed');
         }
 
         function mathHandler() {
@@ -831,67 +657,59 @@
             const value = parseInt(input.value);
             if (!value) return;
             
-            if (value === games.math.answer) {
+            const g = games.math;
+            
+            if (value === g.answer) {
                 totalScore += 20;
                 gamesPlayed++;
                 wins++;
-                document.getElementById('gameHint').textContent = '✅ Правильно!';
-                document.getElementById('historyMessage').textContent = '+20 очков!';
-                games.math.num1 = 0;
-                games.math.attempts = 0;
+                document.getElementById('historyMessage').textContent = '✅ Правильно! +20 очков';
+                g.num1 = Math.floor(Math.random() * 20) + 1;
+                g.num2 = Math.floor(Math.random() * 20) + 1;
+                g.attempts = 0;
                 updateStats();
-                setTimeout(() => loadGame('math'), 1000);
             } else {
-                games.math.attempts++;
-                document.getElementById('gameHint').textContent = '❌ Неправильно';
-                document.getElementById('historyMessage').textContent = `Правильно: ${games.math.answer}`;
+                g.attempts++;
+                document.getElementById('historyMessage').textContent = `❌ Правильно: ${g.answer}`;
                 
-                if (games.math.attempts >= games.math.maxAttempts) {
-                    games.math.num1 = 0;
-                    games.math.attempts = 0;
+                if (g.attempts >= g.maxAttempts) {
+                    g.num1 = Math.floor(Math.random() * 20) + 1;
+                    g.num2 = Math.floor(Math.random() * 20) + 1;
+                    g.attempts = 0;
                 }
             }
+            
             input.value = '';
+            loadGame('math');
         }
 
         function memoryHandler() {
             const input = document.getElementById('gameInput');
             const value = parseInt(input.value);
-            if (!value || !games.memory.canInput) return;
+            if (!value) return;
             
-            if (value === games.memory.number) {
+            const g = games.memory;
+            
+            if (value === g.number) {
                 totalScore += 35;
                 gamesPlayed++;
                 wins++;
-                document.getElementById('gameHint').textContent = '🧠 Отлично!';
-                document.getElementById('historyMessage').textContent = '+35 очков!';
-                games.memory.number = 0;
-                games.memory.attempts = 0;
+                document.getElementById('historyMessage').textContent = '🧠 Отлично! +35 очков';
+                g.number = Math.floor(Math.random() * 900) + 100;
+                g.attempts = 0;
                 updateStats();
-                if (memoryTimer) clearTimeout(memoryTimer);
-                setTimeout(() => loadGame('memory'), 1000);
             } else {
-                games.memory.attempts++;
-                document.getElementById('gameHint').textContent = '❌ Неверно';
-                document.getElementById('historyMessage').textContent = `Было: ${games.memory.number}`;
+                g.attempts++;
+                document.getElementById('historyMessage').textContent = `❌ Было: ${g.number}`;
                 
-                if (games.memory.attempts >= games.memory.maxAttempts) {
-                    games.memory.number = 0;
-                    games.memory.attempts = 0;
+                if (g.attempts >= g.maxAttempts) {
+                    g.number = Math.floor(Math.random() * 900) + 100;
+                    g.attempts = 0;
                 }
             }
-            input.value = '';
             
-            if (games.memory.attempts < games.memory.maxAttempts && games.memory.number !== 0) {
-                games.memory.showing = true;
-                games.memory.canInput = false;
-                if (memoryTimer) clearTimeout(memoryTimer);
-                memoryTimer = setTimeout(() => {
-                    games.memory.showing = false;
-                    games.memory.canInput = true;
-                    loadGame('memory');
-                }, 3000);
-            }
+            input.value = '';
+            loadGame('memory');
         }
 
         // Запуск
