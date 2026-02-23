@@ -255,6 +255,146 @@
             opacity: 0.7;
         }
 
+        /* Кнопка таблицы лидеров */
+        .leaderboard-toggle {
+            background: rgba(255, 215, 0, 0.1);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 40px;
+            padding: 14px 20px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 1rem;
+            text-align: center;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s;
+            color: #FFD700;
+            letter-spacing: 1px;
+        }
+
+        .leaderboard-toggle:hover {
+            background: rgba(255, 215, 0, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(255, 215, 0, 0.3);
+        }
+
+        /* Таблица лидеров */
+        .leaderboard-card {
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.6));
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 48px;
+            padding: 24px;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+
+        .leaderboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .leaderboard-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #FFD700;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 40px;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            transition: transform 0.2s;
+        }
+
+        .leaderboard-item:hover {
+            transform: translateX(5px);
+            border-color: #FFD700;
+        }
+
+        .leaderboard-rank {
+            width: 36px;
+            height: 36px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.2rem;
+        }
+
+        .rank-1 { 
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #000; 
+            box-shadow: 0 0 20px #FFD700;
+        }
+        .rank-2 { 
+            background: linear-gradient(135deg, #C0C0C0, #A0A0A0);
+            color: #000; 
+            box-shadow: 0 0 20px #C0C0C0;
+        }
+        .rank-3 { 
+            background: linear-gradient(135deg, #CD7F32, #8B4513);
+            color: #fff; 
+            box-shadow: 0 0 20px #CD7F32;
+        }
+        .rank-other { 
+            background: rgba(255, 255, 255, 0.1); 
+            color: #fff; 
+        }
+
+        .leaderboard-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 22px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .leaderboard-info {
+            flex: 1;
+        }
+
+        .leaderboard-name {
+            font-weight: 700;
+            margin-bottom: 2px;
+            font-size: 1.1rem;
+        }
+
+        .leaderboard-stats {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        .leaderboard-score {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            color: #FFD700;
+            font-size: 1.4rem;
+        }
+
+        .no-players {
+            text-align: center;
+            padding: 30px;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 1rem;
+        }
+
         /* Навигация */
         .game-nav {
             display: flex;
@@ -301,106 +441,6 @@
         @keyframes bounce {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-3px); }
-        }
-
-        /* Таблица лидеров */
-        .leaderboard-card {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 48px;
-            padding: 24px;
-            margin-bottom: 20px;
-        }
-
-        .leaderboard-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .leaderboard-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: #FFD700;
-        }
-
-        .leaderboard-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 40px;
-            padding: 12px 16px;
-            margin-bottom: 8px;
-            border: 1px solid rgba(255, 215, 0, 0.1);
-        }
-
-        .leaderboard-rank {
-            width: 30px;
-            height: 30px;
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 800;
-            font-size: 1.1rem;
-        }
-
-        .rank-1 { background: #FFD700; color: #000; }
-        .rank-2 { background: #C0C0C0; color: #000; }
-        .rank-3 { background: #CD7F32; color: #000; }
-        .rank-other { background: rgba(255, 255, 255, 0.1); color: #fff; }
-
-        .leaderboard-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 20px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
-
-        .leaderboard-info {
-            flex: 1;
-        }
-
-        .leaderboard-name {
-            font-weight: 700;
-            margin-bottom: 2px;
-        }
-
-        .leaderboard-score {
-            font-size: 0.8rem;
-            opacity: 0.7;
-        }
-
-        .leaderboard-value {
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 700;
-            color: #FFD700;
-            font-size: 1.2rem;
-        }
-
-        /* Кнопка показа лидеров */
-        .toggle-leaderboard {
-            background: rgba(255, 215, 0, 0.1);
-            border: 1px solid rgba(255, 215, 0, 0.3);
-            border-radius: 40px;
-            padding: 12px;
-            text-align: center;
-            margin-bottom: 15px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-
-        .toggle-leaderboard:hover {
-            background: rgba(255, 215, 0, 0.2);
         }
 
         /* Игровая карточка */
@@ -690,13 +730,18 @@
             margin-bottom: 5px;
         }
 
-        /* Эффекты */
-        .glow-text {
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
-        }
-
+        /* Скрытые элементы */
         .hidden {
             display: none;
+        }
+
+        /* Подпись */
+        .credit {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 0.8rem;
+            opacity: 0.5;
+            color: rgba(255, 255, 255, 0.5);
         }
     </style>
 </head>
@@ -738,19 +783,19 @@
             </div>
         </div>
 
-        <!-- Кнопка показа лидеров -->
-        <div class="toggle-leaderboard" id="toggleLeaderboard">
+        <!-- Кнопка таблицы лидеров -->
+        <div class="leaderboard-toggle" id="toggleLeaderboard">
             🏆 ПОКАЗАТЬ ТАБЛИЦУ ЛИДЕРОВ 🏆
         </div>
 
         <!-- Таблица лидеров (скрыта по умолчанию) -->
         <div class="leaderboard-card hidden" id="leaderboardCard">
             <div class="leaderboard-header">
-                <span class="leaderboard-title">🏆 ТОП ИГРОКОВ</span>
-                <span>⭐ 5 ЛУЧШИХ</span>
+                <span class="leaderboard-title">🏆 ТОП 5 ИГРОКОВ</span>
+                <span>⚡ Лучшие</span>
             </div>
             <div id="leaderboardList">
-                <!-- Сюда загружаются лидеры -->
+                <div class="no-players">Загрузка игроков...</div>
             </div>
         </div>
 
@@ -782,6 +827,11 @@
         <div class="history-box" id="historyMessage">
             🚀 Готов к приключению?
         </div>
+
+        <!-- Подпись -->
+        <div class="credit">
+            Created by @illlhai
+        </div>
     </div>
 
     <!-- Достижение -->
@@ -795,11 +845,10 @@
         const tg = Telegram.WebApp;
         tg.ready();
         tg.expand();
-        tg.enableClosingConfirmation();
 
         // Пользователь
         const user = tg.initDataUnsafe?.user;
-        const userId = user?.id || 'guest_' + Math.random().toString(36).substr(2, 9);
+        const userId = user?.id?.toString() || 'guest_' + Math.random().toString(36).substr(2, 9);
         const userName = user?.first_name || 'Игрок';
         const userUsername = user?.username || userName;
         
@@ -816,13 +865,30 @@
         
         // Статистика игроков (сохраняем в localStorage)
         let playersStats = JSON.parse(localStorage.getItem('numberquest_players')) || {};
-        
+
+        // Функция сохранения данных
+        function saveAllData() {
+            localStorage.setItem('numberquest_players', JSON.stringify(playersStats));
+        }
+
         // Загружаем данные игрока если есть
         if (playersStats[userId]) {
             totalScore = playersStats[userId].score || 0;
             gamesPlayed = playersStats[userId].games || 0;
             wins = playersStats[userId].wins || 0;
             achievements = playersStats[userId].achievements || [];
+        } else {
+            // Создаем запись для нового игрока
+            playersStats[userId] = {
+                name: userName,
+                username: userUsername,
+                score: 0,
+                games: 0,
+                wins: 0,
+                achievements: [],
+                lastSeen: new Date().toISOString()
+            };
+            saveAllData();
         }
 
         // Состояния игр
@@ -868,7 +934,7 @@
             { id: 'high_roller', name: 'Высокий риск', desc: 'Угадай число в диапазоне 1-1000', icon: '🎲', points: 300 }
         ];
 
-        // Сохранение статистики
+        // Сохранение статистики игрока
         function savePlayerStats() {
             playersStats[userId] = {
                 name: userName,
@@ -879,7 +945,7 @@
                 achievements: achievements,
                 lastSeen: new Date().toISOString()
             };
-            localStorage.setItem('numberquest_players', JSON.stringify(playersStats));
+            saveAllData();
             updateLeaderboard();
         }
 
@@ -889,33 +955,44 @@
             if (!leaderboardList) return;
             
             // Преобразуем в массив и сортируем по очкам
-            const players = Object.entries(playersStats).map(([id, data]) => ({
-                id,
-                ...data
-            })).sort((a, b) => b.score - a.score).slice(0, 5);
+            const players = Object.entries(playersStats)
+                .map(([id, data]) => ({
+                    id,
+                    ...data,
+                    score: data.score || 0,
+                    wins: data.wins || 0
+                }))
+                .filter(player => player.score > 0) // Показываем только игроков с очками
+                .sort((a, b) => b.score - a.score)
+                .slice(0, 5);
+            
+            if (players.length === 0) {
+                leaderboardList.innerHTML = '<div class="no-players">🌟 Пока нет игроков в топе</div>';
+                return;
+            }
             
             let html = '';
             players.forEach((player, index) => {
                 const rank = index + 1;
                 const rankClass = rank === 1 ? 'rank-1' : rank === 2 ? 'rank-2' : rank === 3 ? 'rank-3' : 'rank-other';
-                const avatarLetter = player.name.charAt(0).toUpperCase();
+                const avatarLetter = player.name ? player.name.charAt(0).toUpperCase() : '?';
+                
+                // Подсвечиваем текущего игрока
+                const isCurrentPlayer = player.id === userId;
+                const highlightStyle = isCurrentPlayer ? 'border: 2px solid #FFD700; background: rgba(255, 215, 0, 0.1);' : '';
                 
                 html += `
-                    <div class="leaderboard-item">
+                    <div class="leaderboard-item" style="${highlightStyle}">
                         <div class="leaderboard-rank ${rankClass}">${rank}</div>
                         <div class="leaderboard-avatar">${avatarLetter}</div>
                         <div class="leaderboard-info">
-                            <div class="leaderboard-name">${player.name}</div>
-                            <div class="leaderboard-score">${player.wins || 0} побед</div>
+                            <div class="leaderboard-name">${player.name || 'Аноним'} ${isCurrentPlayer ? '✨' : ''}</div>
+                            <div class="leaderboard-stats">🏆 ${player.wins || 0} побед</div>
                         </div>
-                        <div class="leaderboard-value">${player.score || 0}</div>
+                        <div class="leaderboard-score">${player.score || 0}</div>
                     </div>
                 `;
             });
-            
-            if (players.length === 0) {
-                html = '<div style="text-align: center; padding: 20px;">Пока нет игроков</div>';
-            }
             
             leaderboardList.innerHTML = html;
         }
@@ -980,13 +1057,19 @@
         });
 
         // Показать/скрыть лидеров
-        document.getElementById('toggleLeaderboard').addEventListener('click', () => {
-            const leaderboard = document.getElementById('leaderboardCard');
-            leaderboard.classList.toggle('hidden');
-            document.getElementById('toggleLeaderboard').textContent = 
-                leaderboard.classList.contains('hidden') ? 
+        const toggleBtn = document.getElementById('toggleLeaderboard');
+        const leaderboardCard = document.getElementById('leaderboardCard');
+        
+        toggleBtn.addEventListener('click', () => {
+            leaderboardCard.classList.toggle('hidden');
+            toggleBtn.textContent = leaderboardCard.classList.contains('hidden') ? 
                 '🏆 ПОКАЗАТЬ ТАБЛИЦУ ЛИДЕРОВ 🏆' : 
                 '🏆 СКРЫТЬ ТАБЛИЦУ ЛИДЕРОВ 🏆';
+            
+            // Обновляем таблицу при открытии
+            if (!leaderboardCard.classList.contains('hidden')) {
+                updateLeaderboard();
+            }
         });
 
         // Загрузка игры
@@ -1192,7 +1275,7 @@
             }
         }
 
-        // Обработчики игр (исправлено - убрана подсказка правильного ответа)
+        // Обработчики игр
         function classicHandler() {
             const input = document.getElementById('gameInput');
             const value = parseInt(input.value);
@@ -1361,6 +1444,9 @@
         loadGame('classic');
         updateStats();
         updateLeaderboard();
+
+        // Обновляем таблицу каждые 30 секунд
+        setInterval(updateLeaderboard, 30000);
     </script>
 </body>
 </html>
