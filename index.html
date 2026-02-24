@@ -71,7 +71,7 @@
             z-index: 10;
         }
 
-        /* Приветственный баннер */
+        /* Приветственный баннер - ИСПРАВЛЕНО название */
         .welcome-banner {
             background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 105, 180, 0.2));
             border: 2px solid rgba(255, 215, 0, 0.3);
@@ -118,6 +118,8 @@
             margin-bottom: 5px;
             text-transform: uppercase;
             letter-spacing: 3px;
+            white-space: nowrap;
+            overflow: visible;
         }
 
         .welcome-sub {
@@ -395,42 +397,79 @@
             font-size: 1rem;
         }
 
-        /* Навигация */
+        /* Навигация - УЛУЧШЕНО для прокрутки */
+        .nav-container {
+            position: relative;
+            margin-bottom: 15px;
+        }
+        
+        .nav-scroll-hint {
+            text-align: center;
+            font-size: 0.8rem;
+            color: rgba(255, 215, 0, 0.5);
+            margin-bottom: 5px;
+            animation: fadeInOut 2s infinite;
+        }
+        
+        @keyframes fadeInOut {
+            0% { opacity: 0.3; }
+            50% { opacity: 1; }
+            100% { opacity: 0.3; }
+        }
+
         .game-nav {
             display: flex;
             gap: 8px;
             overflow-x: auto;
             padding: 5px 2px 15px 2px;
-            scrollbar-width: none;
-            margin-bottom: 10px;
+            scrollbar-width: thin;
+            scrollbar-color: #FFD700 rgba(255, 255, 255, 0.1);
+            -webkit-overflow-scrolling: touch;
+            cursor: grab;
+            scroll-behavior: smooth;
         }
 
         .game-nav::-webkit-scrollbar {
-            display: none;
+            height: 4px;
+        }
+
+        .game-nav::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .game-nav::-webkit-scrollbar-thumb {
+            background: #FFD700;
+            border-radius: 10px;
+        }
+
+        .game-nav::-webkit-scrollbar-thumb:hover {
+            background: #FFA500;
         }
 
         .nav-btn {
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(5px);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 12px 20px;
+            padding: 12px 24px;
             border-radius: 40px;
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             white-space: nowrap;
             cursor: pointer;
             transition: all 0.3s;
             color: rgba(255, 255, 255, 0.7);
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
 
         .nav-btn.active {
             background: linear-gradient(135deg, #FFD700, #FF69B4);
             border-color: transparent;
             color: white;
-            transform: translateY(-2px);
+            transform: translateY(-2px) scale(1.05);
             box-shadow: 0 10px 20px -5px rgba(255, 215, 0, 0.5);
         }
 
@@ -441,6 +480,34 @@
         @keyframes bounce {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-3px); }
+        }
+
+        /* Стрелки для навигации */
+        .nav-arrows {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+            padding: 0 10px;
+        }
+        
+        .nav-arrow {
+            background: rgba(255, 215, 0, 0.2);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 30px;
+            padding: 8px 20px;
+            font-size: 0.9rem;
+            color: #FFD700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .nav-arrow:hover {
+            background: rgba(255, 215, 0, 0.3);
+            transform: scale(1.05);
+        }
+        
+        .nav-arrow:active {
+            transform: scale(0.95);
         }
 
         /* Игровая карточка */
@@ -621,6 +688,11 @@
             transform: scale(1.02);
         }
 
+        .game-input:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
         .action-btn {
             background: linear-gradient(135deg, #FFD700, #FF69B4);
             border: none;
@@ -644,6 +716,13 @@
 
         .action-btn:active {
             transform: scale(0.95);
+        }
+
+        .action-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
         }
 
         /* История */
@@ -755,9 +834,9 @@
     <div class="stars"></div>
     
     <div class="container">
-        <!-- Приветственный баннер -->
+        <!-- Приветственный баннер - ИСПРАВЛЕНО -->
         <div class="welcome-banner">
-            <div class="welcome-title">NumberQuest</div>
+            <div class="welcome-title">NUMBERQUEST</div>
             <div class="welcome-sub">⚡ Космическое приключение ⚡</div>
         </div>
 
@@ -805,22 +884,30 @@
             </div>
         </div>
 
-        <!-- Навигация -->
-        <div class="game-nav" id="gameNav">
-            <div class="nav-btn active" data-game="classic">
-                <span class="nav-emoji">🎯</span> Классика
+        <!-- Навигация с прокруткой -->
+        <div class="nav-container">
+            <div class="nav-scroll-hint" id="scrollHint">← Проведите для выбора игры →</div>
+            <div class="game-nav" id="gameNav">
+                <div class="nav-btn active" data-game="classic">
+                    <span class="nav-emoji">🎯</span> Классика
+                </div>
+                <div class="nav-btn" data-game="ranges">
+                    <span class="nav-emoji">🎲</span> Режимы
+                </div>
+                <div class="nav-btn" data-game="speed">
+                    <span class="nav-emoji">⚡</span> Экстрим
+                </div>
+                <div class="nav-btn" data-game="math">
+                    <span class="nav-emoji">🧮</span> Примеры
+                </div>
+                <div class="nav-btn" data-game="memory">
+                    <span class="nav-emoji">🧠</span> Память
+                </div>
             </div>
-            <div class="nav-btn" data-game="ranges">
-                <span class="nav-emoji">🎲</span> Режимы
-            </div>
-            <div class="nav-btn" data-game="speed">
-                <span class="nav-emoji">⚡</span> Экстрим
-            </div>
-            <div class="nav-btn" data-game="math">
-                <span class="nav-emoji">🧮</span> Примеры
-            </div>
-            <div class="nav-btn" data-game="memory">
-                <span class="nav-emoji">🧠</span> Память
+            <!-- Стрелки для навигации -->
+            <div class="nav-arrows">
+                <span class="nav-arrow" id="navLeft">← Назад</span>
+                <span class="nav-arrow" id="navRight">Вперед →</span>
             </div>
         </div>
 
@@ -1086,6 +1173,23 @@
             if (!leaderboardCard.classList.contains('hidden')) {
                 updateLeaderboard();
             }
+        });
+
+        // Стрелки для навигации
+        document.getElementById('navLeft').addEventListener('click', () => {
+            const nav = document.getElementById('gameNav');
+            nav.scrollBy({ left: -200, behavior: 'smooth' });
+        });
+        
+        document.getElementById('navRight').addEventListener('click', () => {
+            const nav = document.getElementById('gameNav');
+            nav.scrollBy({ left: 200, behavior: 'smooth' });
+        });
+
+        // Скрываем подсказку после первого скролла
+        const nav = document.getElementById('gameNav');
+        nav.addEventListener('scroll', () => {
+            document.getElementById('scrollHint').style.opacity = '0';
         });
 
         // Загрузка игры
