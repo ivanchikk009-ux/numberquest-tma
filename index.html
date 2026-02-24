@@ -647,7 +647,80 @@
 <body>
     <div class="stars"></div>
     
-    <div class="container">
+    <div class="container" id="gameContainer">
+        <!-- Сюда будет вставлена игра или заглушка -->
+    </div>
+
+    <div class="achievement-toast" id="achievementToast">
+        <div class="achievement-icon">✨</div>
+        <div id="achievementText">Достижение разблокировано!</div>
+    </div>
+
+    <script>
+        // ========== ПРОВЕРКА ЗАПУСКА ==========
+        const tg = Telegram.WebApp;
+        tg.ready();
+        
+        // Проверяем, открыта ли игра через бота
+        if (!tg.initDataUnsafe?.user) {
+            // Если нет пользователя - показываем заглушку
+            document.getElementById('gameContainer').innerHTML = `
+                <div style="
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    min-height: 90vh;
+                    text-align: center;
+                    padding: 20px;
+                ">
+                    <div class="welcome-banner" style="width: 100%;">
+                        <div class="welcome-title">NUMBERQUEST</div>
+                        <div class="welcome-sub">⚡ Космическое приключение ⚡</div>
+                    </div>
+                    
+                    <div style="
+                        background: rgba(255, 255, 255, 0.05);
+                        backdrop-filter: blur(20px);
+                        border: 1px solid rgba(255, 255, 255, 0.2);
+                        border-radius: 40px;
+                        padding: 40px 20px;
+                        margin: 20px 0;
+                        width: 100%;
+                    ">
+                        <div style="font-size: 4rem; margin-bottom: 20px;">🚀</div>
+                        <h2 style="font-family: Orbitron; margin-bottom: 15px;">Игра запущена не из Telegram!</h2>
+                        <p style="margin-bottom: 30px; opacity: 0.8;">Чтобы играть, открой бота и нажми кнопку "Играть"</p>
+                        <a href="https://t.me/numberquest_game_bot" 
+                           style="
+                               display: inline-block;
+                               background: linear-gradient(135deg, #FFD700, #FF69B4);
+                               color: white;
+                               padding: 18px 40px;
+                               border-radius: 40px;
+                               text-decoration: none;
+                               font-weight: bold;
+                               font-size: 1.2rem;
+                               border: 1px solid rgba(255,255,255,0.3);
+                               box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+                           ">
+                           👉 ОТКРЫТЬ БОТА
+                        </a>
+                    </div>
+                    
+                    <div class="credit">Created by @illlhai</div>
+                </div>
+            `;
+            
+            // Останавливаем выполнение остального кода
+            throw new Error("Игра запущена не из Telegram WebApp");
+        }
+        
+        // ========== ОСНОВНОЙ КОД ИГРЫ ==========
+        // Если дошли сюда - значит игра открыта из бота
+        
+        // Восстанавливаем содержимое игры
+        document.getElementById('gameContainer').innerHTML = `
         <div class="welcome-banner">
             <div class="welcome-title">NUMBERQUEST</div>
             <div class="welcome-sub">⚡ Космическое приключение ⚡</div>
@@ -721,16 +794,9 @@
         <div class="game-card" id="gameContent"></div>
         <div class="history-box" id="historyMessage">🚀 Готов к приключению?</div>
         <div class="credit">Created by @illlhai</div>
-    </div>
-
-    <div class="achievement-toast" id="achievementToast">
-        <div class="achievement-icon">✨</div>
-        <div id="achievementText">Достижение разблокировано!</div>
-    </div>
-
-    <script>
-        const tg = Telegram.WebApp;
-        tg.ready();
+        `;
+        
+        // ========== ДАЛЬШЕ ИДЕТ ВЕСЬ ТВОЙ ОРИГИНАЛЬНЫЙ КОД ==========
         tg.expand();
 
         const user = tg.initDataUnsafe?.user;
