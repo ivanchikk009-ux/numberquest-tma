@@ -561,6 +561,10 @@
             position: relative;
             z-index: 2;
             backdrop-filter: blur(5px);
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         .hint-emoji {
@@ -594,6 +598,7 @@
             gap: 12px;
             position: relative;
             z-index: 2;
+            margin-top: 20px;
         }
 
         .game-input {
@@ -629,6 +634,7 @@
             border: 2px solid rgba(255, 255, 255, 0.3);
             text-transform: uppercase;
             letter-spacing: 2px;
+            min-width: 80px;
         }
 
         .action-btn:hover {
@@ -862,6 +868,8 @@
         let wins = 0;
         let level = 1;
         let achievements = [];
+        let memoryTimer = null;
+        let memoryPhase = 'show'; // 'show' или 'input'
         
         // Статистика игроков (сохраняем в localStorage)
         let playersStats = JSON.parse(localStorage.getItem('numberquest_players')) || {};
@@ -921,7 +929,8 @@
             memory: {
                 number: Math.floor(Math.random() * 900) + 100,
                 attempts: 0,
-                maxAttempts: 3
+                maxAttempts: 3,
+                phase: 'show' // show или input
             }
         };
 
@@ -1052,6 +1061,13 @@
                 document.querySelectorAll('.nav-btn').forEach(n => n.classList.remove('active'));
                 item.classList.add('active');
                 currentGame = item.dataset.game;
+                
+                // Очищаем таймер памяти при переключении
+                if (memoryTimer) {
+                    clearTimeout(memoryTimer);
+                    memoryTimer = null;
+                }
+                
                 loadGame(currentGame);
             });
         });
@@ -1216,13 +1232,13 @@
                     <div class="game-score">${g.attempts}/${g.maxAttempts}</div>
                 </div>
                 <div class="hint-box">
-                    <div class="hint-emoji">🧠</div>
-                    <div class="hint-text" id="gameHint">${g.number}</div>
-                    <div class="hint-range">Запомни число!</div>
+                    <div class="hint-emoji" id="memoryEmoji">${g.phase === 'show' ? '🧠' : '❓'}</div>
+                    <div class="hint-text" id="memoryNumber">${g.phase === 'show' ? g.number : '???'}</div>
+                    <div class="hint-range" id="memoryHint">${g.phase === 'show' ? 'Запомни число! (3 сек)' : 'Какое число было?'}</div>
                 </div>
                 <div class="input-wrapper">
-                    <input type="number" id="gameInput" class="game-input" placeholder="?">
-                    <button class="action-btn" id="submitBtn">→</button>
+                    <input type="number" id="gameInput" class="game-input" placeholder="?" ${g.phase === 'show' ? 'disabled' : ''}>
+                    <button class="action-btn" id="submitBtn" ${g.phase === 'show' ? 'disabled' : ''}>→</button>
                 </div>
             `;
         }
@@ -1268,9 +1284,18 @@
                 };
             }
             else if (game === 'memory') {
+                // Запускаем таймер для смены фазы
+                if (games.memory.phase === 'show') {
+                    if (memoryTimer) clearTimeout(memoryTimer);
+                    memoryTimer = setTimeout(() => {
+                        games.memory.phase = 'input';
+                        loadGame('memory');
+                    }, 3000);
+                }
+                
                 document.getElementById('submitBtn').onclick = memoryHandler;
                 document.getElementById('gameInput').onkeypress = (e) => {
-                    if (e.key === 'Enter') memoryHandler();
+                    if (e.key === 'Enter' && games.memory.phase === 'input') memoryHandler();
                 };
             }
         }
@@ -1391,7 +1416,6 @@
                 g.num1 = Math.floor(Math.random() * 20) + 1;
                 g.num2 = Math.floor(Math.random() * 20) + 1;
                 g.attempts = 0;
-                document.getElementById('gameHint').textContent = `${g.num1} + ${g.num2} = ?`;
             } else {
                 g.attempts++;
                 document.getElementById('historyMessage').textContent = `❌ Неправильно`;
@@ -1400,7 +1424,6 @@
                     g.num1 = Math.floor(Math.random() * 20) + 1;
                     g.num2 = Math.floor(Math.random() * 20) + 1;
                     g.attempts = 0;
-                    document.getElementById('gameHint').textContent = `${g.num1} + ${g.num2} = ?`;
                 }
             }
             
@@ -1411,7 +1434,7 @@
         function memoryHandler() {
             const input = document.getElementById('gameInput');
             const value = parseInt(input.value);
-            if (!value) return;
+            if (!value || games.memory.phase !== 'input') return;
             
             const g = games.memory;
             
@@ -1424,19 +1447,30 @@
                 updateStats();
                 g.number = Math.floor(Math.random() * 900) + 100;
                 g.attempts = 0;
-                document.getElementById('gameHint').textContent = g.number;
+                g.phase = 'show';
             } else {
                 g.attempts++;
-                document.getElementById('historyMessage').textContent = `❌ Неправильно`;
+                document.getElementById('historyMessage').textContent = `❌ Неправильно. Было: ${g.number}`;
                 
                 if (g.attempts >= g.maxAttempts) {
                     g.number = Math.floor(Math.random() * 900) + 100;
                     g.attempts = 0;
-                    document.getElementById('gameHint').textContent = g.number;
+                    g.phase = 'show';
+                } else {
+                    g.phase = 'show';
                 }
             }
             
             input.value = '';
+            
+            if (g.phase === 'show') {
+                if (memoryTimer) clearTimeout(memoryTimer);
+                memoryTimer = setTimeout(() => {
+                    g.phase = 'input';
+                    loadGame('memory');
+                }, 3000);
+            }
+            
             loadGame('memory');
         }
 
